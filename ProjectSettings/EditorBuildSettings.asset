@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/PKHex/Scenes/PKHex.unity
+    guid: 26a24f8f75693134fb77070694a7969e
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8914788f25e694a4ba59f42b97affec4
   m_configObjects: {}

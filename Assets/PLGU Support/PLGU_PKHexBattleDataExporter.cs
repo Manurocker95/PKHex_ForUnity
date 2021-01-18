@@ -33,11 +33,11 @@ namespace PokemonLetsGoUnity
                 new ExtensionFilter("All Files", "*" ),
             };
 
-            string[] paths = StandaloneFileBrowser.OpenFilePanel("Select PKM file", "", extensions, false);
+            var paths = StandaloneFileBrowser.OpenFilePanel("Select PKM file", "", extensions, false);
 
-            if (paths.Length > 0)
+            if (paths.Count > 0)
             {
-                m_pkmPath = paths[0];
+                m_pkmPath = paths[0].Name;
                 if (!string.IsNullOrEmpty(m_pkmPath))
                 {
                     var kvp = PLGU_PKHexUtils.LoadPKMFromPath(m_pkmPath);
@@ -69,11 +69,11 @@ namespace PokemonLetsGoUnity
                 new ExtensionFilter("All Files", "*" ),
             };
 
-            string[] paths = StandaloneFileBrowser.OpenFilePanel("Select PLGU_PKHexData file", "", extensions, false);
+            var paths = StandaloneFileBrowser.OpenFilePanel("Select PLGU_PKHexData file", "", extensions, false);
 
-            if (paths.Length > 0)
+            if (paths.Count > 0)
             {
-                m_pkmPath = paths[0];
+                m_pkmPath = paths[0].Name;
                 if (!string.IsNullOrEmpty(m_pkmPath))
                 {
                     byte[] bytes = System.IO.File.ReadAllBytes(m_pkmPath);
@@ -105,21 +105,25 @@ namespace PokemonLetsGoUnity
         {
             if (m_loaded)
             {
-                string path = StandaloneFileBrowser.SaveFilePanel("Select where to save the PLGU Pokémon Data", "", $"{m_pkm.Nickname}", "PLGU_PKHexData");
-                if (!string.IsNullOrEmpty(path))
+                var item = StandaloneFileBrowser.SaveFilePanel("Select where to save the PLGU Pokémon Data", "", $"{m_pkm.Nickname}", "PLGU_PKHexData");
+                if (item != null)
                 {
-                    try
+                    string path = item.Name;
+                    if (string.IsNullOrEmpty(path))
                     {
-                        m_data = PLGU_PKHexUtils.ConvertPKMToBattleData(m_pkm);
-                        string json = JsonUtility.ToJson(m_data);
-                        byte[] bytes = System.Text.UTF8Encoding.UTF8.GetBytes(json);
-                        System.IO.File.WriteAllBytes(path, bytes);
+                        try
+                        {
+                            m_data = PLGU_PKHexUtils.ConvertPKMToBattleData(m_pkm);
+                            string json = JsonUtility.ToJson(m_data);
+                            byte[] bytes = System.Text.UTF8Encoding.UTF8.GetBytes(json);
+                            System.IO.File.WriteAllBytes(path, bytes);
+                        }
+                        catch (System.Exception e)
+                        {
+                            m_text.text = "No PKM is loaded because: " + e.Message + ": " + e.StackTrace;
+                        }
                     }
-                    catch (System.Exception e)
-                    {
-                        m_text.text = "No PKM is loaded because: "+e.Message + ": "+e.StackTrace;
-                    }
-                }
+                }    
             }
             else
             {
