@@ -86,13 +86,15 @@ namespace PokemonLetsGoUnity
 			List<string> mvs = new List<string>();
 			foreach (string st in GetMoveNames(_pkm.Moves))
 			{
-				mvs.Add(st);
+				if (!st.Contains("—"))
+					mvs.Add(st);
 			}
 
 			List<string> eggmvs = new List<string>();
 			foreach (string st in GetMoveNames(_pkm.RelearnMoves))
 			{
-				eggmvs.Add(st);
+				if (!st.Contains("—"))
+					eggmvs.Add(st);
 			}
 
 			int gender = _pkm.Gender;
