@@ -11,6 +11,7 @@ namespace PokemonLetsGoUnity
         public string m_species;
         public List<string> m_moves = new List<string>();
         public List<string> m_relearnMoves = new List<string>();
+        public int PID = -1;
         public int m_gender = -1;
         public int m_form = -1;
         public int m_obtainMode = 0;

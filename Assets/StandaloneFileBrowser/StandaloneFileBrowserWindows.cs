@@ -129,6 +129,7 @@ namespace SFB
                         var filename = multiselect && results.Count > 0 ? $"{results[0].Name}\\{currentString}" : currentString;
                         results.Add(new ItemWithStream
                         {
+                            FullName = filename,
                             Name = filename//,
                             //Stream = File.OpenRead(filename)
                         });

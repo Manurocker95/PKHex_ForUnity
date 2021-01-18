@@ -8,27 +8,27 @@ PluginImporter:
   defineConstraints: []
   isPreloaded: 0
   isOverridable: 0
-  isExplicitlyReferenced: 1
-  validateReferences: 0
+  isExplicitlyReferenced: 0
+  validateReferences: 1
   platformData:
   - first:
       : Any
     second:
       enabled: 0
       settings:
-        Exclude Android: 1
-        Exclude Editor: 1
-        Exclude Linux64: 1
-        Exclude OSXUniversal: 1
-        Exclude Switch: 1
-        Exclude WebGL: 1
-        Exclude Win: 1
-        Exclude Win64: 1
-        Exclude iOS: 1
+        Exclude Android: 0
+        Exclude Editor: 0
+        Exclude Linux64: 0
+        Exclude OSXUniversal: 0
+        Exclude Switch: 0
+        Exclude WebGL: 0
+        Exclude Win: 0
+        Exclude Win64: 0
+        Exclude iOS: 0
   - first:
       Android: Android
     second:
-      enabled: 0
+      enabled: 1
       settings:
         CPU: ARMv7
   - first:
@@ -39,35 +39,45 @@ PluginImporter:
   - first:
       Editor: Editor
     second:
-      enabled: 0
+      enabled: 1
       settings:
         CPU: AnyCPU
         DefaultValueInitialized: true
         OS: AnyOS
   - first:
+      Nintendo Switch: Switch
+    second:
+      enabled: 1
+      settings: {}
+  - first:
       Standalone: Linux64
     second:
-      enabled: 0
+      enabled: 1
       settings:
-        CPU: None
+        CPU: x86_64
   - first:
       Standalone: OSXUniversal
     second:
-      enabled: 0
+      enabled: 1
       settings:
-        CPU: None
+        CPU: x86_64
   - first:
       Standalone: Win
     second:
-      enabled: 0
+      enabled: 1
       settings:
-        CPU: None
+        CPU: x86
   - first:
       Standalone: Win64
     second:
-      enabled: 0
+      enabled: 1
       settings:
-        CPU: None
+        CPU: x86_64
+  - first:
+      WebGL: WebGL
+    second:
+      enabled: 1
+      settings: {}
   - first:
       Windows Store Apps: WindowsStoreApps
     second:
@@ -77,7 +87,7 @@ PluginImporter:
   - first:
       iPhone: iOS
     second:
-      enabled: 0
+      enabled: 1
       settings:
         AddToEmbeddedBinaries: false
         CPU: AnyCPU

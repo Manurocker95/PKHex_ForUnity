@@ -21,6 +21,7 @@ namespace SFB
             }
             var itemWithStream = new ItemWithStream
             {
+                FullName = path,
                 Name = path//,
                 //Stream = File.OpenRead(path)
             };
@@ -37,6 +38,7 @@ namespace SFB
             var path = EditorUtility.OpenFolderPanel(title, directory, "");
             var itemWithStream = new ItemWithStream
             {
+                FullName = path,
                 Name = path//,
                 //Stream = File.OpenRead(path)
             };
@@ -55,6 +57,7 @@ namespace SFB
             var path = EditorUtility.SaveFilePanel(title, directory, name, ext);
             var itemWithStream = new ItemWithStream
             {
+                FullName = path + ext,
                 Name = path//,
                 //Stream = File.OpenRead(path)
             };

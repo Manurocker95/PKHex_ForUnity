@@ -29,6 +29,58 @@ namespace PokemonLetsGoUnity
 
     public static class PLGU_PKHexUtils
 	{
+
+		public static bool IsIL2CPPEnabled()
+		{
+#if UNITY_EDITOR
+			return UnityEditor.PlayerSettings.GetScriptingBackend(UnityEditor.EditorUserBuildSettings.selectedBuildTargetGroup) == UnityEditor.ScriptingImplementation.IL2CPP;
+#else
+#if USE_IL2CPP
+			return true;
+#else
+			return false;
+#endif
+#endif
+		}
+#if UNITY_EDITOR
+		public static void AddUseIL2CPP()
+        {
+			string use = "USE_IL2CPP";
+			string definesString = UnityEditor.PlayerSettings.GetScriptingDefineSymbolsForGroup(UnityEditor.EditorUserBuildSettings.selectedBuildTargetGroup);
+			List<string> allDefines = definesString.Split(';').ToList();
+			if (!allDefines.Contains(use))
+            {
+				allDefines.Add(use);
+			}
+			UnityEditor.PlayerSettings.SetScriptingDefineSymbolsForGroup(UnityEditor.EditorUserBuildSettings.selectedBuildTargetGroup, string.Join(";", allDefines.ToArray()));
+		}
+
+		public static void RemoveUseIL2CPP()
+		{
+			string use = "USE_IL2CPP";
+			string definesString = UnityEditor.PlayerSettings.GetScriptingDefineSymbolsForGroup(UnityEditor.EditorUserBuildSettings.selectedBuildTargetGroup);
+			List<string> allDefines = definesString.Split(';').ToList();
+			if (allDefines.Contains(use))
+			{
+				allDefines.Remove(use);
+			}
+			UnityEditor.PlayerSettings.SetScriptingDefineSymbolsForGroup(UnityEditor.EditorUserBuildSettings.selectedBuildTargetGroup, string.Join(";", allDefines.ToArray()));
+		}
+
+		[UnityEditor.MenuItem("PLGU/PKHex/Set IL2CPP Define Symbol")]
+		public static void AddUseIL2CPPIfEnabled()
+        {
+			if (IsIL2CPPEnabled())
+            {
+				AddUseIL2CPP();
+			}
+			else
+            {
+				RemoveUseIL2CPP();
+			}
+        }
+#endif
+
 		public static PLGU_PKHexPokemonData ConvertPKMToBattleData(PKHeX.Core.PKM _pkm)
 		{
 			List<string> mvs = new List<string>();
@@ -70,9 +122,13 @@ namespace PokemonLetsGoUnity
 			{
 				stage = 1;
 			}
-
+#if !USE_IL2CPP
 			int generation = _pkm.Generation;
 			int form = _pkm.Form;
+#else
+			int generation = 8;
+			int form = 0;
+#endif
 			int version = _pkm.Version;
 
 			PLGU_PKHexPokemonData pokemonData = new PLGU_PKHexPokemonData()
@@ -83,6 +139,7 @@ namespace PokemonLetsGoUnity
 				m_gender = gender,
 				m_nature = GetNatureName(_pkm.Nature),
 				m_isShiny = _pkm.IsShiny,
+				PID = (int)_pkm.PID,
 				m_ivs = new List<int>() { _pkm.IV_HP, _pkm.IV_ATK, _pkm.IV_DEF, _pkm.IV_SPE, _pkm.IV_SPA, _pkm.IV_SPD },
 				m_evs = new List<int>() { _pkm.EV_HP, _pkm.EV_ATK, _pkm.EV_DEF, _pkm.EV_SPE, _pkm.EV_SPA, _pkm.EV_SPD },
 				m_moves = mvs,
@@ -160,7 +217,7 @@ namespace PokemonLetsGoUnity
 
 		public static string GetItemName(SaveFile _sav, int _item)
 		{
-			return GetItemNames(_sav).ElementAt(_item);
+			return _item > -1 ? GetItemNames(_sav).ElementAt(_item) : "NONE";
 		}
 		
 		public static string GetMetLocation(bool _isEggLocation, int location, int _format, int _generation, GameVersion _version = GameVersion.Any)
@@ -194,7 +251,7 @@ namespace PokemonLetsGoUnity
 		
 		public static string GetItemName(int _item, int _generation, PKHeX.Core.GameVersion _version = GameVersion.Any)
 		{
-			return GetItemNames(_generation, _version).ElementAt(_item);
+			return _item > -1 ? GetItemNames(_generation, _version).ElementAt(_item) : "NONE";
 		}
     	
         public static dynamic InitializeGenericSavLoader(string sav)

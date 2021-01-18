@@ -45,7 +45,7 @@ namespace PokemonLetsGoUnity
                     if (m_loaded)
                     {
                         m_pkm = kvp.Value;
-                        m_text.text = "Loaded file " + System.IO.Path.GetFileName(m_pkmPath) + " with Pokémon " + m_pkm.Nickname;
+                        m_text.text = "Loaded file " + System.IO.Path.GetFileName(m_pkmPath) + " with Pokémon " + GetSpeciesName();
                     }
                     else
                     {
@@ -98,18 +98,26 @@ namespace PokemonLetsGoUnity
                     m_text.text = "No PKM is loaded";
                 }
             }
+            else if(!m_loaded)
+            {
+                m_text.text = "No PKM is loaded";
+            }
         }
 
+        public string GetSpeciesName()
+        {
+            return PLGU_PKHexUtils.GetPokemonSpeciesNameInLanguage(m_pkm, Application.systemLanguage);
+        }
 
         public void GeneratePLGUData()
         {
             if (m_loaded)
             {
-                var item = StandaloneFileBrowser.SaveFilePanel("Select where to save the PLGU Pokémon Data", "", $"{m_pkm.Nickname}", "PLGU_PKHexData");
+                var item = StandaloneFileBrowser.SaveFilePanel("Select where to save the PLGU Pokémon Data", "", $"{GetSpeciesName()}.PLGU_PKHexData", "PLGU_PKHexData");
                 if (item != null)
                 {
                     string path = item.Name;
-                    if (string.IsNullOrEmpty(path))
+                    if (!string.IsNullOrEmpty(path))
                     {
                         try
                         {
@@ -117,13 +125,25 @@ namespace PokemonLetsGoUnity
                             string json = JsonUtility.ToJson(m_data);
                             byte[] bytes = System.Text.UTF8Encoding.UTF8.GetBytes(json);
                             System.IO.File.WriteAllBytes(path, bytes);
+
+                            System.Diagnostics.Process.Start(System.IO.Path.GetDirectoryName(path));
+                            m_text.text = "PLGU Data for PKM "+m_data.m_nickname+" was exported to: " + path + " from Pokémon " + GetSpeciesName();
                         }
                         catch (System.Exception e)
                         {
-                            m_text.text = "No PKM is loaded because: " + e.Message + ": " + e.StackTrace;
+                            Debug.LogError("Error:" + e.Message + ": " + e.StackTrace);
+                            m_text.text = "No PKM is loaded because: " + e.Message;
                         }
                     }
+                    else
+                    {
+                        m_text.text = "PLGU Data couldn't be generated. Current loaded file " + System.IO.Path.GetFileName(m_pkmPath) + " with Pokémon " + GetSpeciesName();
+                    }
                 }    
+                else
+                {
+                    m_text.text = "PLGU Data couldn't be generated";
+                }
             }
             else
             {
