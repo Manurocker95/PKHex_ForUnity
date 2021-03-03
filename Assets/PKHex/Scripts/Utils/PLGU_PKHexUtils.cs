@@ -42,6 +42,34 @@ namespace PokemonLetsGoUnity
 #endif
 #endif
 		}
+
+		public static List<string> GetFullDexNames()
+		{
+			return new List<string>(GameInfo.Strings.specieslist);
+		}
+
+		public static int GetDexNumber(string _species)
+		{
+			return GetFullDexNames().IndexOf(_species);
+		}
+
+		public static int GetSpeciesInt(string _species)
+		{
+			return GetDexID(_species);
+		}
+
+		public static IEnumerable<string> GetPokemonTypesOfSpecies(string _species)
+		{
+			PK8 pkmn = new PK8() { Species = GetSpeciesInt(_species) };
+			return GameInfo.Strings.Types;
+		}
+
+		public static int GetDexID(string _species, int _language = 2)
+		{
+			return SpeciesName.GetSpeciesID(_species, _language);
+		}
+
+
 #if UNITY_EDITOR
 		public static void AddUseIL2CPP()
         {
