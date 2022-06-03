@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SFB;
+using PKHexForUnity;
 
 namespace PokemonLetsGoUnity
 {
-    public class PLGU_PKHexBattleDataExporter : MonoBehaviour
+    public class PLGU_PLGU_PKHexBattleDataExporter : MonoBehaviour
     {
         [SerializeField] protected TMPro.TMP_Text m_text;
 
@@ -40,7 +41,7 @@ namespace PokemonLetsGoUnity
                 m_pkmPath = paths[0].Name;
                 if (!string.IsNullOrEmpty(m_pkmPath))
                 {
-                    var kvp = PLGU_PKHexUtils.LoadPKMFromPath(m_pkmPath);
+                    var kvp = PKHexUtils.LoadPKMFromPath(m_pkmPath);
                     m_loaded = kvp.Key;
                     if (m_loaded)
                     {
@@ -106,7 +107,7 @@ namespace PokemonLetsGoUnity
 
         public string GetSpeciesName()
         {
-            return PLGU_PKHexUtils.GetPokemonSpeciesNameInLanguage(m_pkm, Application.systemLanguage);
+            return PKHexUtils.GetPokemonSpeciesNameInLanguage(m_pkm, Application.systemLanguage);
         }
 
         public void GeneratePLGUData()
@@ -121,7 +122,7 @@ namespace PokemonLetsGoUnity
                     {
                         try
                         {
-                            m_data = PLGU_PKHexUtils.ConvertPKMToBattleData(m_pkm);
+                            m_data = PKHexUtils.ConvertPKMToBattleData(m_pkm);
                             string json = JsonUtility.ToJson(m_data);
                             byte[] bytes = System.Text.UTF8Encoding.UTF8.GetBytes(json);
                             System.IO.File.WriteAllBytes(path, bytes);
