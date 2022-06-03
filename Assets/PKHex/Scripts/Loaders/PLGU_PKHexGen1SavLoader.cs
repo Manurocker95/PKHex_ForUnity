@@ -17,6 +17,15 @@ namespace PokemonLetsGoUnity
             }
         }
 
+        public override string PlayerName
+        {
+            get
+            {
+                return m_saveFile != null ? m_saveFile.OT : base.PlayerName;
+            }
+        }
+
+
         public override uint Coins
         {
             get

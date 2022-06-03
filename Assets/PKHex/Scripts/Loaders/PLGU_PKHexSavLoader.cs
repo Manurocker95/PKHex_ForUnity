@@ -12,6 +12,14 @@ namespace PokemonLetsGoUnity
 
         public T m_saveFile;
 
+        public virtual string PlayerName
+        {
+            get
+            {
+                return m_saveFile != null ? m_saveFile.OT : "Trainer";
+            }
+        }
+
         public virtual int Badges
         {
             get
@@ -119,6 +127,11 @@ namespace PokemonLetsGoUnity
         public virtual T0 GetPKM<T0>(T savefile, byte[] data)
         {
             return default(T0);
+        }
+
+        public virtual bool HasParty()
+        {
+            return m_saveFile != null ? m_saveFile.HasParty : false;
         }
 
         public virtual bool IsSurfingPikachuInPartySaveData(string sav)
