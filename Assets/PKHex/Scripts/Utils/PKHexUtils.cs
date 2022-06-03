@@ -67,10 +67,74 @@ namespace PKHexForUnity
 			return GetDexID(_species);
 		}
 
-		public static IEnumerable<string> GetPokemonTypesOfSpecies(string _species)
+		public static PKM GetPokemonFromSpecies(string _species, PokemonGeneration generation)
+        {
+			switch (generation)
+            {
+				case PokemonGeneration.Kanto:
+				case PokemonGeneration.Stadium:
+					PK1 pkmn = new PK1() { Species = GetSpeciesInt(_species) };
+					return pkmn;
+				case PokemonGeneration.Johto:
+				case PokemonGeneration.Stadium2:
+					PK2 pkmn2 = new PK2() { Species = GetSpeciesInt(_species) };
+					return pkmn2;
+				case PokemonGeneration.Hoenn:
+				case PokemonGeneration.Colosseum:
+				case PokemonGeneration.XD:
+				case PokemonGeneration.Box:
+					PK3 pkmn3 = new PK3() { Species = GetSpeciesInt(_species) };
+					return pkmn3;
+				case PokemonGeneration.Sinnoh:
+				case PokemonGeneration.SinnohPt:
+				case PokemonGeneration.HGSS:
+					PK4 pkmn4 = new PK4() { Species = GetSpeciesInt(_species) };
+					return pkmn4;
+				case PokemonGeneration.Tesselia:
+				case PokemonGeneration.TesseliaBW2:
+					PK5 pkmn5 = new PK5() { Species = GetSpeciesInt(_species) };
+					return pkmn5;
+				case PokemonGeneration.Kalos:
+				case PokemonGeneration.ORAS:
+					PK6 pkmn6 = new PK6() { Species = GetSpeciesInt(_species) };
+					return pkmn6;
+				case PokemonGeneration.Alola:
+				case PokemonGeneration.USUM:
+					PK7 pkmn7 = new PK7() { Species = GetSpeciesInt(_species) };
+					return pkmn7;
+				case PokemonGeneration.Galar:
+				case PokemonGeneration.BDSP:
+				case PokemonGeneration.LegendsArceus:
+					PK8 pkmn8 = new PK8() { Species = GetSpeciesInt(_species) };
+					return pkmn8;
+
+				default:
+					PK8 pkmndef = new PK8() { Species = GetSpeciesInt(_species) };
+					return pkmndef;
+			}
+        }
+
+		public static IEnumerable<string> GetPokemonTypesOfSpecies(string _species, PokemonGeneration _gen = PokemonGeneration.LegendsArceus)
 		{
 			PK8 pkmn = new PK8() { Species = GetSpeciesInt(_species) };
-			return GameInfo.Strings.Types;
+			return GetPokemonTypes(pkmn);
+		}
+
+		public static IEnumerable<string> GetPokemonTypes(PKM _pkm)
+		{
+			var personalInfo = _pkm.PersonalInfo;
+			int type1 = personalInfo.Type1;
+			int type2 = personalInfo.Type2;
+			
+			var types = GameInfo.Strings.Types;
+
+			List<string> pkmnTypes = new List<string>();
+			pkmnTypes.Add(types.ElementAt(type1));
+
+			if (type2 >= 0)
+				pkmnTypes.Add(types.ElementAt(type2));
+
+			return pkmnTypes;
 		}
 
 		public static int GetDexID(string _species, int _language = 2)
