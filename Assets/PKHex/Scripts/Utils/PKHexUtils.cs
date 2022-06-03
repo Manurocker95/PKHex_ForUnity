@@ -120,6 +120,29 @@ namespace PKHexForUnity
 			return GetPokemonTypes(pkmn);
 		}
 
+		public static IEnumerable<string> GetPokemonHiddenAbilities(PKM _pkm)
+		{
+			var abilities = new List<string>(GetPokemonAbilities(_pkm));
+
+			if (abilities.Count == 0)
+				return new List<string>() { GetAbilities().ElementAt(0) };
+
+			return new List<string>() { abilities[abilities.Count - 1] };
+		}
+
+		public static IEnumerable<string> GetPokemonAbilities(PKM _pkm)
+        {
+			var personalInfo = _pkm.PersonalInfo;
+			List<string> abilities = new List<string>(GetAbilities());
+			List<string> pkmnAbilities = new List<string>();
+
+			foreach (var ab in personalInfo.Abilities)
+            {
+				pkmnAbilities.Add(abilities[ab]);
+			}
+			return pkmnAbilities;
+		}
+
 		public static IEnumerable<string> GetPokemonTypes(PKM _pkm)
 		{
 			var personalInfo = _pkm.PersonalInfo;
