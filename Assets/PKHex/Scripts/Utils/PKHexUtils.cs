@@ -288,12 +288,12 @@ namespace PKHexForUnity
 				m_strainPokerus = _pkm.PKRS_Strain,
 				m_relearnMoves = eggmvs,
 				m_marks = new List<bool>(){
-					_pkm.MarkCircle == 1 ? true : false,
-					_pkm.MarkDiamond == 1 ? true : false,
-					_pkm.MarkHeart == 1 ? true : false,
-					_pkm.MarkSquare == 1 ? true : false,
-					_pkm.MarkStar == 1 ? true : false,
-					_pkm.MarkTriangle == 1 ? true : false,
+					_pkm.GetMarking(_pkm.IV_HP) == 1 ? true : false,
+					_pkm.GetMarking(_pkm.IV_ATK) == 1 ? true : false,
+					_pkm.GetMarking(_pkm.IV_DEF) == 1 ? true : false,
+					_pkm.GetMarking(_pkm.IV_SPA) == 1 ? true : false,
+					_pkm.GetMarking(_pkm.IV_SPD) == 1 ? true : false,
+					_pkm.GetMarking(_pkm.IV_SPE) == 1 ? true : false,
 				},
 				m_currentExperience = (int)_pkm.EXP
 			};
@@ -406,7 +406,31 @@ namespace PKHexForUnity
             return new KeyValuePair<bool, PKM>(false, null);
         }
 
-        public static string GetPokemonSpeciesNameInLanguage(PKM pokemon, SystemLanguage _language)
+		public static IEnumerable<string> GetPokemonTypeList(LanguageID _language = LanguageID.English)
+		{
+			return GameInfo.Strings.Types;
+		}
+
+		public static List<string> GetPokemonTypesInLanguage(PKM pokemon, SystemLanguage _language)
+		{
+			string lang = _language.ToString();
+			LanguageID l = LanguageID.English;
+			System.Enum.TryParse(lang, out l);
+
+			return new List<string>(GetPokemonTypes(pokemon));
+		}
+
+		public static string GetPokemonNatureInLanguage(PKM pokemon, SystemLanguage _language)
+		{
+
+			string lang = _language.ToString();
+			LanguageID l = LanguageID.English;
+			System.Enum.TryParse(lang, out l);
+
+			return GetNatureName(pokemon.Nature);
+		}
+
+		public static string GetPokemonSpeciesNameInLanguage(PKM pokemon, SystemLanguage _language)
         {
 
             string lang = _language.ToString();
