@@ -9,3 +9,7 @@ https://github.com/kwsch/PKHeX
 
 Using Unity Standalone File Browser under MIT License
 Check the project at: https://github.com/gkngkc/UnityStandaloneFileBrowser
+
+PKHeX's shiny sprite collection is taken from [pokesprite](https://github.com/msikma/pokesprite), which is licensed under [the MIT license](https://github.com/msikma/pokesprite/blob/master/LICENSE).
+
+PKHeX's Pokémon Legends: Arceus sprite collection is taken from the [National Pokédex - Icon Dex](https://www.deviantart.com/pikafan2000/art/National-Pokedex-Version-Delta-Icon-Dex-824897934) project and its abundance of collaborators and contributors.
