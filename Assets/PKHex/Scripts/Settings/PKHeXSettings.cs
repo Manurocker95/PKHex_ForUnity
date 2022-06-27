@@ -205,6 +205,10 @@ namespace PKHexForUnity
 
         [LocalizedDescription("Severity to flag a Legality Check if Pokémon has a zero value for both Height and Weight.")]
         public Severity ZeroHeightWeight { get; set; } = Severity.Fishy;
+
+        public bool CheckActiveHandler => throw new NotImplementedException();
+
+        public Severity CurrentHandlerMismatch => throw new NotImplementedException();
     }
 
     [Serializable]
