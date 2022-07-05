@@ -389,8 +389,12 @@ namespace PKHexForUnity
 
                 var type = typeof(PKHexSavLoader<>).MakeGenericType(savefile.GetType());
                 dynamic savLoader = System.Activator.CreateInstance(type);
-                savLoader.SetSaveFile(savefile);
-                return savLoader;
+#if NET_4_6
+				savLoader.SetSaveFile(savefile);
+#else
+				Debug.LogError("Can't init generic savefile because you are not using .NET 4.x. Please, change the framework in Project Settings.");
+#endif
+				return savLoader;
             }
 
             return null;
@@ -537,7 +541,12 @@ namespace PKHexForUnity
             var type = typeof(PKHexSavLoader<>).MakeGenericType(savefile.GetType());
             dynamic savLoader = System.Activator.CreateInstance(type);
 
-            return savLoader.GetPokemonNameInPartyInSlot(savefile, slot);
+#if NET_4_6
+			return savLoader.GetPokemonNameInPartyInSlot(savefile, slot);
+#else
+			Debug.LogError("Can't get data from generic savefile because you are not using .NET 4.x. Please, change the framework in Project Settings.");
+			return "Pikachu";
+#endif
         }
 
         public static string L_AError { get; set; } = "Internal error.";

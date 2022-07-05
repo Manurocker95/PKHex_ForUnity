@@ -10,7 +10,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "PKHEX_FOR_UNITY"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }
