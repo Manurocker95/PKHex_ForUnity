@@ -6,7 +6,7 @@ using PKHexForUnity;
 
 namespace PokemonLetsGoUnity
 {
-    public class PLGU_PLGU_PKHexBattleDataExporter : MonoBehaviour
+    public class PLGU_PKHexBattleDataExporter : MonoBehaviour
     {
         [SerializeField] protected TMPro.TMP_Text m_text;
 
