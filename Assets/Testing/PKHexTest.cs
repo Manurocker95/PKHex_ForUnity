@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿#if PKHEX_FOR_UNITY
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Linq;
 using PKHeX.Core;
-using PokemonLetsGoUnity;
 using SFB;
 
 namespace PKHexForUnity
@@ -66,3 +66,4 @@ namespace PKHexForUnity
         }
     }
 }
+#endif

@@ -1,9 +1,9 @@
+#if PKHEX_FOR_UNITY
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PKHeX;
 using PKHeX.Core;
-using PokemonLetsGoUnity;
 
 namespace PKHexForUnity
 {
@@ -25,3 +25,4 @@ namespace PKHexForUnity
     }
 
 }
+#endif
