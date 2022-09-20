@@ -292,17 +292,12 @@ namespace PKHexForUnity
 
         public virtual string GetPokemonSpeciesNameInLanguage(PKM pokemon, SystemLanguage _language)
         {
-
-            string lang = _language.ToString();
-            LanguageID l = LanguageID.English;
-            System.Enum.TryParse(lang, out l);
-
-            return SpeciesName.GetSpeciesName(pokemon.Species, (int)l);
+            return SpeciesName.GetSpeciesName(pokemon.Species, PKHexUtils.GetLanguageCodeIndex(_language));
         }
 
         public virtual string GetPokemonSpeciesNameInLanguage(PKM pokemon, LanguageID _language)
         {
-            return SpeciesName.GetSpeciesName(pokemon.Species, (int)_language);
+            return SpeciesName.GetSpeciesName(pokemon.Species, PKHexUtils.GetLanguageCodeIndex(_language));
         }
 
         public virtual string GetPokemonSpeciesNameInLanguage(PKM pokemon, int _language)

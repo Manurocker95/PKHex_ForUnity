@@ -5,10 +5,7 @@ using UnityEngine;
 using PKHeX.Core;
 using System.Linq;
 using PokemonLetsGoUnity;
-using UnityEngine.Diagnostics;
 using System;
-using System.Runtime.Remoting.Contexts;
-using static UnityEditor.PlayerSettings.Switch;
 
 namespace PKHexForUnity
 {
@@ -416,6 +413,81 @@ namespace PKHexForUnity
             return "en";
         }
 
+        public static int GetLanguageCodeIndex(LanguageID _language = LanguageID.English)
+        {
+            LanguageCodes code = LanguageCodes.en;
+            switch (_language)
+            {
+                case LanguageID.English:
+                    code = LanguageCodes.en;
+                    break;
+                case LanguageID.Spanish:
+                    code = LanguageCodes.es;
+                    break;
+                case LanguageID.Italian:
+                    code = LanguageCodes.it;
+                    break;
+                case LanguageID.French:
+                    code = LanguageCodes.fr;
+                    break;
+                case LanguageID.Japanese:
+                    code = LanguageCodes.ja;
+                    break;
+                case LanguageID.German:
+                    code = LanguageCodes.de;
+                    break;
+                case LanguageID.Korean:
+                    code = LanguageCodes.ko;
+                    break;
+                case LanguageID.ChineseS:
+                    code = LanguageCodes.zh;
+                    break;
+                case LanguageID.ChineseT:
+                    code = LanguageCodes.zh2;
+                    break;
+            }
+
+            return (int)code;
+        }
+
+        public static int GetLanguageCodeIndex(SystemLanguage _language = SystemLanguage.English)
+		{
+			LanguageCodes code = LanguageCodes.en;
+            switch (_language)
+            {
+                case SystemLanguage.English:
+                    code = LanguageCodes.en;
+					break;
+                case SystemLanguage.Spanish:
+                    code = LanguageCodes.es;
+                    break;
+                case SystemLanguage.Italian:
+                    code = LanguageCodes.it;
+                    break;
+                case SystemLanguage.French:
+                    code = LanguageCodes.fr;
+                    break;
+                case SystemLanguage.Japanese:
+                    code = LanguageCodes.ja;
+                    break;
+                case SystemLanguage.German:
+                    code = LanguageCodes.de;
+                    break;
+                case SystemLanguage.Korean:
+                    code = LanguageCodes.ko;
+                    break;
+                case SystemLanguage.ChineseSimplified:
+                case SystemLanguage.Chinese:
+                    code = LanguageCodes.zh;
+                    break;
+                case SystemLanguage.ChineseTraditional:
+                    code = LanguageCodes.zh2;
+                    break;
+            }
+
+            return (int)code;
+        }
+
         public static string GetLanguageCode(SystemLanguage _language = SystemLanguage.English)
 		{
 			switch (_language)
@@ -505,7 +577,29 @@ namespace PKHexForUnity
             return GameInfo.Strings.GetItemStrings((EntityContext)_generation, _version);
 		}
 
-		public static IEnumerable<string> GetItemNames(SaveFile _sav, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+        public static IEnumerable<string> GetItemNames(EntityContext _generation, GameVersion _version = GameVersion.Any, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+        {
+            if (_language != SystemLanguage.English)
+            {
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.GetItemStrings(_generation, _version);
+            }
+            return GameInfo.Strings.GetItemStrings(_generation, _version);
+        }
+
+        public static IEnumerable<string> GetItemNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+        {
+            if (_language != SystemLanguage.English)
+            {
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.GetItemStrings(EntityContext.Gen8, GameVersion.Any);
+            }
+            return GameInfo.Strings.GetItemStrings(EntityContext.Gen8, GameVersion.Any);
+        }
+
+        public static IEnumerable<string> GetItemNames(SaveFile _sav, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
             if (_language != SystemLanguage.English)
             {
