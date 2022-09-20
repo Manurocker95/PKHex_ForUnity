@@ -5,6 +5,10 @@ using UnityEngine;
 using PKHeX.Core;
 using System.Linq;
 using PokemonLetsGoUnity;
+using UnityEngine.Diagnostics;
+using System;
+using System.Runtime.Remoting.Contexts;
+using static UnityEditor.PlayerSettings.Switch;
 
 namespace PKHexForUnity
 {
@@ -52,9 +56,31 @@ namespace PKHexForUnity
 #endif
 		}
 
-		public static List<string> GetFullDexNames()
+		public static Dictionary<string, string> GetFullDexNamesAsDictionary(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			return new List<string>(GameInfo.Strings.specieslist);
+			Dictionary<string, string> dex = new Dictionary<string, string>();
+			List<string> english = GetFullDexNames(SystemLanguage.English);
+			List<string> other = GetFullDexNames(_language, gameStrings);
+
+			for (int i = 0; i < english.Count; i++)
+			{
+				dex.Add(english[i], other[i]);
+            }
+
+			return dex;
+		}
+
+		public static List<string> GetFullDexNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+		{
+            if (_language != SystemLanguage.English)
+            {
+
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return new List<string>(strings.specieslist);
+            }
+
+            return new List<string>(GameInfo.Strings.specieslist);
 		}
 
 		public static int GetDexNumber(string _species)
@@ -64,7 +90,7 @@ namespace PKHexForUnity
 
 		public static int GetSpeciesInt(string _species)
 		{
-			return GetDexID(_species);
+			return GetSpeciesID(_species);
 		}
 
 		public static PKM GetPokemonFromSpecies(string _species, PokemonGeneration generation)
@@ -73,85 +99,89 @@ namespace PKHexForUnity
             {
 				case PokemonGeneration.Kanto:
 				case PokemonGeneration.Stadium:
-					PK1 pkmn = new PK1() { Species = GetSpeciesInt(_species) };
+					PK1 pkmn = new PK1() { Species = (ushort)GetSpeciesInt(_species) };
 					return pkmn;
 				case PokemonGeneration.Johto:
 				case PokemonGeneration.Stadium2:
-					PK2 pkmn2 = new PK2() { Species = GetSpeciesInt(_species) };
+					PK2 pkmn2 = new PK2() { Species = (ushort)GetSpeciesInt(_species) };
 					return pkmn2;
 				case PokemonGeneration.Hoenn:
 				case PokemonGeneration.Colosseum:
 				case PokemonGeneration.XD:
 				case PokemonGeneration.Box:
-					PK3 pkmn3 = new PK3() { Species = GetSpeciesInt(_species) };
+					PK3 pkmn3 = new PK3() { Species = (ushort)GetSpeciesInt(_species) };
 					return pkmn3;
 				case PokemonGeneration.Sinnoh:
 				case PokemonGeneration.SinnohPt:
 				case PokemonGeneration.HGSS:
-					PK4 pkmn4 = new PK4() { Species = GetSpeciesInt(_species) };
+					PK4 pkmn4 = new PK4() { Species = (ushort)GetSpeciesInt(_species) };
 					return pkmn4;
 				case PokemonGeneration.Tesselia:
 				case PokemonGeneration.TesseliaBW2:
-					PK5 pkmn5 = new PK5() { Species = GetSpeciesInt(_species) };
+					PK5 pkmn5 = new PK5() { Species = (ushort)GetSpeciesInt(_species) };
 					return pkmn5;
 				case PokemonGeneration.Kalos:
 				case PokemonGeneration.ORAS:
-					PK6 pkmn6 = new PK6() { Species = GetSpeciesInt(_species) };
+					PK6 pkmn6 = new PK6() { Species = (ushort)GetSpeciesInt(_species) };
 					return pkmn6;
 				case PokemonGeneration.Alola:
 				case PokemonGeneration.USUM:
-					PK7 pkmn7 = new PK7() { Species = GetSpeciesInt(_species) };
+					PK7 pkmn7 = new PK7() { Species = (ushort)GetSpeciesInt(_species) };
 					return pkmn7;
 				case PokemonGeneration.Galar:
 				case PokemonGeneration.BDSP:
 				case PokemonGeneration.LegendsArceus:
-					PK8 pkmn8 = new PK8() { Species = GetSpeciesInt(_species) };
+					PK8 pkmn8 = new PK8() { Species = (ushort)GetSpeciesInt(_species) };
 					return pkmn8;
 
 				default:
-					PK8 pkmndef = new PK8() { Species = GetSpeciesInt(_species) };
+					PK8 pkmndef = new PK8() { Species = (ushort)GetSpeciesInt(_species) };
 					return pkmndef;
 			}
         }
 
-		public static IEnumerable<string> GetPokemonTypesOfSpecies(string _species, PokemonGeneration _gen = PokemonGeneration.LegendsArceus)
+		public static IEnumerable<string> GetPokemonTypesOfSpecies(string _species, PokemonGeneration _gen = PokemonGeneration.LegendsArceus, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			PK8 pkmn = new PK8() { Species = GetSpeciesInt(_species) };
-			return GetPokemonTypes(pkmn);
+			PK8 pkmn = new PK8() { Species = (ushort)GetSpeciesInt(_species) };
+			return GetPokemonTypes(pkmn, _language);
 		}
 
-		public static IEnumerable<string> GetPokemonHiddenAbilities(PKM _pkm)
+		public static IEnumerable<string> GetPokemonHiddenAbilities(PKM _pkm, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			var abilities = new List<string>(GetPokemonAbilities(_pkm));
+			var abilities = new List<string>(GetPokemonAbilities(_pkm, _language, gameStrings));
 
 			if (abilities.Count == 0)
-				return new List<string>() { GetAbilities().ElementAt(0) };
+				return new List<string>() { GetAbilities(_language, gameStrings).ElementAt(0) };
 
 			return new List<string>() { abilities[abilities.Count - 1] };
 		}
 
-		public static IEnumerable<string> GetPokemonAbilities(PKM _pkm)
+		public static IEnumerable<string> GetPokemonAbilities(PKM _pkm, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
         {
 			var personalInfo = _pkm.PersonalInfo;
-			List<string> abilities = new List<string>(GetAbilities());
+			List<string> abilities = new List<string>(GetAbilities(_language, gameStrings));
 			List<string> pkmnAbilities = new List<string>();
 
-			foreach (var ab in personalInfo.Abilities)
+            var array = new int[3];
+            var abilitySpan = new Span<int>(array);
+			personalInfo.GetAbilities(abilitySpan);
+
+            foreach (var ab in abilitySpan)
             {
 				pkmnAbilities.Add(abilities[ab]);
 			}
 			return pkmnAbilities;
 		}
 
-		public static IEnumerable<string> GetPokemonTypes(PKM _pkm)
+		public static IEnumerable<string> GetPokemonTypes(PKM _pkm, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
 			var personalInfo = _pkm.PersonalInfo;
 			int type1 = personalInfo.Type1;
 			int type2 = personalInfo.Type2;
-			
-			var types = GameInfo.Strings.Types;
 
-			List<string> pkmnTypes = new List<string>();
+			var types = GetTypes(_language, gameStrings); // Util.GetTypesList(GetLanguageIDAsString(_language)); // ; 
+
+            List<string> pkmnTypes = new List<string>();
 			pkmnTypes.Add(types.ElementAt(type1));
 
 			if (type2 >= 0)
@@ -160,9 +190,9 @@ namespace PKHexForUnity
 			return pkmnTypes;
 		}
 
-		public static int GetDexID(string _species, int _language = 2)
+		public static int GetSpeciesID(string _species, SystemLanguage _language = SystemLanguage.English)
 		{
-			return SpeciesName.GetSpeciesID(_species, _language);
+			return SpeciesName.GetSpeciesID(_species, GetLanguageIndex(_language));
 		}
 
 
@@ -307,38 +337,106 @@ namespace PKHexForUnity
 
 		}
 
-		public static IEnumerable<string> GetCharacteristincsNames()
+		public static IEnumerable<string> GetCharacteristincsNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			return GameInfo.Strings.characteristics;
+            if (_language != SystemLanguage.English)
+            {
+
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.characteristics;
+            }
+            return GameInfo.Strings.characteristics;
 		}
 
-		public static IEnumerable<string> GetStatusNames()
+		public static IEnumerable<string> GetStatusNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			return GameInfo.Strings.characteristics;
+            if (_language != SystemLanguage.English)
+            {
+
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.characteristics;
+            }
+            return GameInfo.Strings.characteristics;
 		}
 		
-		public static IEnumerable<string> GetNatureNames()
+		public static int GetLanguageIndex (SystemLanguage _language = SystemLanguage.English)
 		{
-			return GameInfo.Strings.Natures;
-		}
-		public static IEnumerable<string> GetBallNames()
-		{
-			return GameInfo.Strings.balllist;
-		}
-		
-		public static IEnumerable<string> GetAbilities()
-		{
-			return GameInfo.Strings.Ability;
-		}
-		
-		public static IEnumerable<string> GetItemNames(int _generation, PKHeX.Core.GameVersion _version = GameVersion.Any)
-		{
-			return GameInfo.Strings.GetItemStrings(_generation, _version);
+			return GameLanguage.GetLanguageIndex(GetLanguageIDAsString(_language));
 		}
 
-		public static IEnumerable<string> GetItemNames(SaveFile _sav)
+		public static GameStrings GetLocalizedTexts(SystemLanguage _language = SystemLanguage.English)
 		{
-			return GameInfo.Strings.GetItemStrings(_sav.Generation);
+            return GameInfo.GetStrings(GetLanguageIndex(_language));
+        }
+
+        public static IEnumerable<string> GetNatureNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+		{
+			if (_language != SystemLanguage.English)
+			{
+				
+				var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+				return strings.Natures;
+            }
+
+            return GameInfo.Strings.Natures;
+		}
+		public static IEnumerable<string> GetBallNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+		{
+            if (_language != SystemLanguage.English)
+			{
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.balllist;
+            }
+
+            return GameInfo.Strings.balllist;
+		}
+		
+		public static IEnumerable<string> GetTypes(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+		{
+            if (_language != SystemLanguage.English)
+            {
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.Types;
+            }
+            return GameInfo.Strings.Types;
+        }
+		public static IEnumerable<string> GetAbilities(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+		{
+            if (_language != SystemLanguage.English)
+            {
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.Ability;
+            }
+            return GameInfo.Strings.Ability;
+		}
+		
+		public static IEnumerable<string> GetItemNames(int _generation, GameVersion _version = GameVersion.Any, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+		{
+            if (_language != SystemLanguage.English)
+            {
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.GetItemStrings((EntityContext)_generation, _version);
+            }
+            return GameInfo.Strings.GetItemStrings((EntityContext)_generation, _version);
+		}
+
+		public static IEnumerable<string> GetItemNames(SaveFile _sav, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+		{
+            if (_language != SystemLanguage.English)
+            {
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.GetItemStrings(_sav.Context);
+            }
+
+            return GameInfo.Strings.GetItemStrings(_sav.Context);
 		}
 
 		public static string GetItemName(SaveFile _sav, int _item)
@@ -346,38 +444,51 @@ namespace PKHexForUnity
 			return _item > -1 ? GetItemNames(_sav).ElementAt(_item) : "NONE";
 		}
 		
-		public static string GetMetLocation(bool _isEggLocation, int location, int _format, int _generation, GameVersion _version = GameVersion.Any)
+		public static string GetMetLocation(bool _isEggLocation, int location, int _format, int _generation, GameVersion _version = GameVersion.Any, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			return GameInfo.Strings.GetLocationName(_isEggLocation, location, _format, _generation, _version);
+            if (_language != SystemLanguage.English)
+            {
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.GetLocationName(_isEggLocation, location, _format, _generation, _version);
+            }
+
+            return GameInfo.Strings.GetLocationName(_isEggLocation, location, _format, _generation, _version);
 		}
 		
-		public static string GetMetLocation(bool _isEggLocation, int location, int _format, int _generation, int _version)
-		{
-			return GameInfo.Strings.GetLocationName(_isEggLocation, location, _format, _generation, (GameVersion)_version);
+		public static string GetMetLocation(bool _isEggLocation, int location, int _format, int _generation, int _version, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+        {
+            if (_language != SystemLanguage.English)
+            {
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return strings.GetLocationName(_isEggLocation, location, _format, _generation, (GameVersion)_version);
+            }
+            return GameInfo.Strings.GetLocationName(_isEggLocation, location, _format, _generation, (GameVersion)_version);
 		}
 		
-		public static string GetStatusName(int _status)
+		public static string GetStatusName(int _status, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			return GetStatusNames().ElementAt(_status);
+			return GetStatusNames(_language, gameStrings).ElementAt(_status);
 		}
 		
-		public static string GetBallName(int _ball)
+		public static string GetBallName(int _ball, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			return GetBallNames().ElementAt(_ball);
+			return GetBallNames(_language, gameStrings).ElementAt(_ball);
 		}
-		public static string GetAbilityName(int _ability)
+		public static string GetAbilityName(int _ability, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			return GetAbilities().ElementAt(_ability);
-		}
-		
-		public static string GetNatureName(int _nature)
-		{
-			return GetNatureNames().ElementAt(_nature);
+			return GetAbilities(_language, gameStrings).ElementAt(_ability);
 		}
 		
-		public static string GetItemName(int _item, int _generation, PKHeX.Core.GameVersion _version = GameVersion.Any)
+		public static string GetNatureName(int _nature, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
-			return _item > -1 ? GetItemNames(_generation, _version).ElementAt(_item) : "NONE";
+			return GetNatureNames(_language, gameStrings).ElementAt(_nature);
+		}
+		
+		public static string GetItemName(int _item, int _generation, PKHeX.Core.GameVersion _version = GameVersion.Any, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+		{
+			return _item > -1 ? GetItemNames(_generation, _version, _language, gameStrings).ElementAt(_item) : "NONE";
 		}
     	
         public static dynamic InitializeGenericSavLoader(string sav)
@@ -410,38 +521,33 @@ namespace PKHexForUnity
             return new KeyValuePair<bool, PKM>(false, null);
         }
 
-		public static IEnumerable<string> GetPokemonTypeList(LanguageID _language = LanguageID.English)
+		public static string GetLanguageIDAsString(SystemLanguage _language)
 		{
-			return GameInfo.Strings.Types;
-		}
+			return GetLanguageID(_language).ToString();
+        }
 
-		public static List<string> GetPokemonTypesInLanguage(PKM pokemon, SystemLanguage _language)
+		public static LanguageID GetLanguageID(SystemLanguage _language)
 		{
-			string lang = _language.ToString();
-			LanguageID l = LanguageID.English;
-			System.Enum.TryParse(lang, out l);
-
-			return new List<string>(GetPokemonTypes(pokemon));
-		}
-
-		public static string GetPokemonNatureInLanguage(PKM pokemon, SystemLanguage _language)
-		{
-
-			string lang = _language.ToString();
-			LanguageID l = LanguageID.English;
-			System.Enum.TryParse(lang, out l);
-
-			return GetNatureName(pokemon.Nature);
-		}
-
-		public static string GetPokemonSpeciesNameInLanguage(PKM pokemon, SystemLanguage _language)
-        {
-
             string lang = _language.ToString();
             LanguageID l = LanguageID.English;
             System.Enum.TryParse(lang, out l);
 
-            return SpeciesName.GetSpeciesName(pokemon.Species, (int)l);
+			return l;
+        }
+
+		public static List<string> GetPokemonTypesInLanguage(PKM pokemon, SystemLanguage _language, GameStrings gameStrings = null)
+		{
+            return new List<string>(GetPokemonTypes(pokemon, _language, gameStrings));
+		}
+
+		public static string GetPokemonNatureInLanguage(PKM pokemon, SystemLanguage _language, GameStrings gameStrings = null)
+		{
+			return GetNatureName(pokemon.Nature, _language, gameStrings);
+		}
+
+		public static string GetPokemonSpeciesNameInLanguage(PKM pokemon, SystemLanguage _language)
+        {
+            return GetPokemonSpeciesNameInLanguage(pokemon, GetLanguageID(_language));
         }
 
         public static string GetPokemonSpeciesNameInLanguage(PKM pokemon, LanguageID _language)
@@ -550,8 +656,8 @@ namespace PKHexForUnity
         }
 
         public static string L_AError { get; set; } = "Internal error.";
-        public static string[] MoveStrings { internal get; set; } = Util.GetMovesList(GameLanguage.DefaultLanguage);
-        public static IEnumerable<string> GetMoveNames(IEnumerable<int> moves) => moves.Select(m => (uint)m >= MoveStrings.Length ? L_AError : MoveStrings[m]);
-        public static string[] SpeciesStrings { internal get; set; } = Util.GetSpeciesList(GameLanguage.DefaultLanguage);
+        public static IReadOnlyList<string> MoveStrings { get; set; } = Util.GetMovesList(GameLanguage.DefaultLanguage);
+        public static IReadOnlyList<string> SpeciesStrings { get; set; } = Util.GetSpeciesList(GameLanguage.DefaultLanguage);
+        public static IEnumerable<string> GetMoveNames(IEnumerable<ushort> moves) => moves.Select(m => m >= MoveStrings.Count ? LegalityCheckStrings.L_AError : MoveStrings[m]);
     }
 }

@@ -157,7 +157,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Standalone: com.Manurocker95.PKHexForUnity
+    Standalone: com.Manurocker95.PKHex-ForUnity
   buildNumber:
     Standalone: 0
     iPhone: 0
@@ -709,7 +709,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthStep: 0.2
   webGLMemoryGeometricGrowthCap: 96
   scriptingDefineSymbols:
-    Standalone: USE_IL2CPP
+    Standalone: USE_IL2CPP;PKHEX_FOR_UNITY
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
