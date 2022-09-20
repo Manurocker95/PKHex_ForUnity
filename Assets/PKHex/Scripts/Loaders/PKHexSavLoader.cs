@@ -167,14 +167,14 @@ namespace PKHexForUnity
         }
 
 
-        public virtual int GetPokemonInPartyWithMove(T savefile, string _moveName, string _pokemon = "")
+        public virtual int GetPokemonInPartyWithMove(T savefile, string _moveName, string _pokemon = "", SystemLanguage _lang = SystemLanguage.English)
         {
             var party = savefile.PartyData;
 
             int indexInParty = 0;
             foreach (PKM pokemon in party)
             {
-                List<string> moves = new List<string>(GetPokemonMoves(pokemon));
+                List<string> moves = new List<string>(GetPokemonMoves(pokemon, _lang));
                 if (moves.Contains(_moveName))
                 {
                     if (string.IsNullOrEmpty(_pokemon))
@@ -184,7 +184,7 @@ namespace PKHexForUnity
                     }
                     else
                     {
-                        if (PKHexUtils.SpeciesStrings.Contains(_pokemon))
+                        if (PKHexUtils.SpeciesStrings(_lang).Contains(_pokemon))
                         {
                             Debug.Log($"Yes, a {pokemon.Nickname} has {_moveName}");
                             return indexInParty;
@@ -199,7 +199,7 @@ namespace PKHexForUnity
         }
 
 
-        public virtual int GetPokemonInPartyWithMoveInCurrentFile(string _moveName, string _pokemon = "")
+        public virtual int GetPokemonInPartyWithMoveInCurrentFile(string _moveName, string _pokemon = "", SystemLanguage _lang = SystemLanguage.English)
         {
             if (m_saveFile == null)
                 return -1;
@@ -219,7 +219,7 @@ namespace PKHexForUnity
                     }
                     else
                     {
-                        if (PKHexUtils.SpeciesStrings.Contains(_pokemon))
+                        if (PKHexUtils.SpeciesStrings(_lang).Contains(_pokemon))
                         {
                             Debug.Log($"Yes, a {pokemon.Nickname} has {_moveName}");
                             return indexInParty;
@@ -342,9 +342,9 @@ namespace PKHexForUnity
             return party[slot];
         }
 
-        public virtual IEnumerable<string> GetPokemonMoves(PKM pokemon)
+        public virtual IEnumerable<string> GetPokemonMoves(PKM pokemon, SystemLanguage _language = SystemLanguage.English)
         {
-            return pokemon != null ? PKHexUtils.GetMoveNames(pokemon.Moves) : new string[1] { PKHexUtils.L_AError };
+            return pokemon != null ? PKHexUtils.GetMoveNames(pokemon.Moves, _language) : new string[1] { PKHexUtils.L_AError };
         } 
         
         public virtual int GetPokemonLevel(PKM pokemon)
