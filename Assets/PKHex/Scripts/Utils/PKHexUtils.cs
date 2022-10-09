@@ -6,6 +6,7 @@ using PKHeX.Core;
 using System.Linq;
 using PokemonLetsGoUnity;
 using System;
+using System.Reflection;
 
 namespace PKHexForUnity
 {
@@ -131,32 +132,68 @@ namespace PKHexForUnity
             return GetFullDexNames(_language, strings).IndexOf(_species);
         }
 
-        public static string GetDexEntry(int _species, SystemLanguage _language, GameStrings strings = null)
+        public static string GetDexEntry(int _species, SystemLanguage _language, SaveFile? savefile = null, GameStrings strings = null)
         {
             return "No Entry Found";
         }
 
-        public static string GetDexEntry(int _species, LanguageID _language, GameStrings strings = null)
+        public static string GetDexEntry(int _species, LanguageID _language, SaveFile? savefile = null, GameStrings strings = null)
         {
             return "No Entry Found";
         }
 
-        public static string GetDexEntry(string _species, SystemLanguage _language, GameStrings strings = null)
+        public static string GetDexEntry(string _species, SystemLanguage _language, GameVersion _version = GameVersion.SWSH, GameStrings strings = null, SaveFile? file = null)
         {
-            int entryIdx = GetSpeciesLanguageListIndex(_language);
-            return GetDexEntry(entryIdx, _language, strings);
+            var save = GetDefaultSave(_version, file);
+            return GetDexEntry(GetSpeciesInt(_species), _language, save, strings);
         }
 
-        public static string GetDexEntry(string _species, LanguageID _language, GameStrings strings = null)
+        public static string GetDexEntry(string _species, LanguageID _language, GameVersion _version = GameVersion.SWSH, GameStrings strings = null, SaveFile? file = null)
         {
-            int entryIdx = GetSpeciesLanguageListIndex(_language);
-            return GetDexEntry(entryIdx, _language, strings);
+            var save = GetDefaultSave(_version, file);
+            int speciesIndex = GetSpeciesInt(_species);
+
+            Zukan8Index idx = new Zukan8Index(Zukan8Type.Galar, (ushort)speciesIndex);
+
+            return GetDexEntry(speciesIndex, _language, save, strings);
         }
 
         public static int GetSpeciesInt(string _species)
 		{
 			return GetSpeciesID(_species);
 		}
+
+        public static SaveFile GetDefaultSaveFromPKM(PKM pk, LanguageID _language)
+        {
+            var ctx = pk.Context;
+            var ver = ctx.GetSingleGameVersion();
+            if (pk is { Format: 1, Japanese: true })
+                ver = GameVersion.BU;
+
+            return SaveUtil.GetBlankSAV(ver, pk.OT_Name, _language);
+        }
+
+        public static SaveFile GetDefaultSaveFromPKM(PKM pk)
+        {
+            var ctx = pk.Context;
+            var ver = ctx.GetSingleGameVersion();
+            if (pk is { Format: 1, Japanese: true })
+                ver = GameVersion.BU;
+
+            return SaveUtil.GetBlankSAV(ver, pk.OT_Name, (LanguageID)pk.Language);
+        }
+
+        public static SaveFile GetDefaultSave(GameVersion version = GameVersion.PLA, SaveFile? current = null)
+        {
+            var lang = SaveUtil.GetSafeLanguage(current);
+            var tr = SaveUtil.GetSafeTrainerName(current, lang);
+            var sav = SaveUtil.GetBlankSAV(version, tr, lang);
+            
+            if (sav.Version == GameVersion.Invalid) // will fail to load
+                sav = SaveUtil.GetBlankSAV((GameVersion)GameInfo.VersionDataSource.Max(z => z.Value), tr, lang);
+
+            return sav;
+        }
 
 		public static PKM GetPokemonFromSpecies(string _species, PokemonGeneration generation)
         {
