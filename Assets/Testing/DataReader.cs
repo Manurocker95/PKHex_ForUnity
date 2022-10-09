@@ -3,13 +3,13 @@ using PKHeX.Core;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.PlayerSettings.Switch;
-
+using PKHexForUnity.PokeAPI;
 
 namespace PKHexForUnity
 {
     public class DataReader : MonoBehaviour
     {
+
         public struct DataReaderPokemon
         {
             public string ID;
@@ -20,7 +20,9 @@ namespace PKHexForUnity
 
         public int PokemonIndex = 1;
         public LanguageID Language = LanguageID.English;
-        
+
+        public PokeAPILoader PokeAPILoader;
+
         protected DataReaderPokemon m_currentMonster;
 
         // Start is called before the first frame update
@@ -69,7 +71,7 @@ namespace PKHexForUnity
             var dexNumber = PKHexUtils.GetDexNumber(species, Language);
             var dex = PKHexUtils.GetDexEntry(species, Language);
             var id = species.ToUpper();
-
+           
             DataReaderPokemon pkmn = new DataReaderPokemon()
             {
                 ID = id,
@@ -79,8 +81,7 @@ namespace PKHexForUnity
             };
 
             return pkmn;
-        }
+        } 
     }
-
 }
 #endif

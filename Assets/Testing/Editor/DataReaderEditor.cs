@@ -17,6 +17,7 @@ namespace PKHexForUnity
             if (myTarget == null)
                 return;
 
+            EditorGUILayout.LabelField("PKHex For Unity ");
             myTarget.PokemonIndex = EditorGUILayout.IntSlider("Pokémon Index", myTarget.PokemonIndex, 1, 905);
             myTarget.Language = (LanguageID)EditorGUILayout.EnumPopup("Language", myTarget.Language);
 
@@ -31,6 +32,23 @@ namespace PKHexForUnity
             if (GUILayout.Button("Show Full Dex List"))
             {
                 myTarget.ShowFullDexList();
+            }
+
+            GUILayout.Space(20);
+
+            EditorGUILayout.LabelField("PokeAPI");
+            myTarget.PokeAPILoader = (PokeAPI.PokeAPILoader)EditorGUILayout.ObjectField(myTarget.PokeAPILoader, typeof(PokeAPI.PokeAPILoader), true);
+
+            GUILayout.Space(20);
+            
+            if (myTarget.PokeAPILoader)
+            {
+                if (GUILayout.Button("Save Full Dex List From API"))
+                    myTarget.PokeAPILoader.FillDexFromAPI();
+            }
+            else
+            {
+                EditorGUILayout.LabelField("Add reference for PokeAPI Loader");
             }
         }
     }

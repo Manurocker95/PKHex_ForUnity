@@ -7,6 +7,7 @@ using System.Linq;
 using PokemonLetsGoUnity;
 using System;
 using System.Reflection;
+using static PKHexForUnity.PokeAPI.PokeAPIPokemonData;
 
 namespace PKHexForUnity
 {
@@ -107,6 +108,45 @@ namespace PKHexForUnity
             }
 
             return new List<string>(GameInfo.Strings.specieslist);
+        }
+
+        public static int GetDexCount(PokemonGeneration generation = PokemonGeneration.LegendsArceus)
+        {
+            switch (generation)
+            {
+                case PokemonGeneration.Kanto:
+                case PokemonGeneration.Stadium:
+                    return 151;
+                case PokemonGeneration.Johto:
+                case PokemonGeneration.Stadium2:
+                    return 251;
+                case PokemonGeneration.Hoenn:
+                case PokemonGeneration.Colosseum:
+                case PokemonGeneration.XD:
+                case PokemonGeneration.Box:
+                    return 386;
+                case PokemonGeneration.Sinnoh:
+                case PokemonGeneration.SinnohPt:
+                case PokemonGeneration.HGSS:
+                    return 493;
+                case PokemonGeneration.Tesselia:
+                case PokemonGeneration.TesseliaBW2:
+                    return 649;
+                case PokemonGeneration.Kalos:
+                case PokemonGeneration.ORAS:
+                    return 721;
+                case PokemonGeneration.Alola:
+                    return 800;
+                case PokemonGeneration.USUM:
+                    return 809;
+                case PokemonGeneration.Galar:
+                case PokemonGeneration.BDSP:
+                    return 898;
+                case PokemonGeneration.LegendsArceus:
+                    return 905;
+                default:
+                    return 905;
+            }
         }
 
         public static List<string> GetFullDexNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
