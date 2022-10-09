@@ -1,3 +1,4 @@
+using PKHeX.Core;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,6 +117,22 @@ namespace PKHexForUnity.PokeAPI
                 default:
                     return new List<string>() { "red", "blue", "yellow" };
             }
+        }
+
+        public virtual void GetDexDescription(int _speciesNumber, string _generationID, LanguageID _language = LanguageID.English)
+        {
+            StartCoroutine(GetPokemonTextFromPokeAPI(_speciesNumber, (string _data) =>
+            {
+                PokeAPIPokemonData apiData = JsonUtility.FromJson<PokeAPIPokemonData>(_data);
+                var dexData = apiData.flavor_text_entries;
+                var languageCode = PKHexUtils.GetLanguageCode(_language);
+                var possible = dexData.Where(x => x.version.name == _generationID && x.language.name == languageCode);
+                foreach (var d in possible)
+                {
+                    var entry = d.flavor_text.Replace("\n", " ").Replace("\f", " ").Replace("- ", " ");
+                    Debug.Log(entry);
+                }
+            }));
         }
 
         public virtual void GetDexDescription(int _speciesNumber, string _generationID, SystemLanguage _language = SystemLanguage.English)
