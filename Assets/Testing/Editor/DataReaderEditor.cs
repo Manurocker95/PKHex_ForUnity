@@ -43,6 +43,15 @@ namespace PKHexForUnity
             
             if (myTarget.PokeAPILoader)
             {
+                if (GUILayout.Button("Show Pokemon From API"))
+                    myTarget.PokeAPILoader.GetPokemonFromAPI(myTarget.PokemonIndex, false);
+
+                if (GUILayout.Button("Show Pokemon Dex Entry From API"))
+                    myTarget.PokeAPILoader.GetDexDescription(myTarget.PokemonIndex, myTarget.PokeAPILoader.GetGameID(myTarget.PokeAPILoader.Version), SystemLanguage.English);
+
+                if (GUILayout.Button("Save Pokemon From API"))
+                    myTarget.PokeAPILoader.GetPokemonFromAPI(myTarget.PokemonIndex, true);
+
                 if (GUILayout.Button("Save Full Dex List From API"))
                     myTarget.PokeAPILoader.FillDexFromAPI();
             }

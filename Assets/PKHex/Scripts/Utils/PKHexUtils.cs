@@ -172,23 +172,23 @@ namespace PKHexForUnity
             return GetFullDexNames(_language, strings).IndexOf(_species);
         }
 
-        public static string GetDexEntry(int _species, SystemLanguage _language, SaveFile? savefile = null, GameStrings strings = null)
+        public static string GetDexEntry(int _species, SystemLanguage _language, SaveFile savefile = null, GameStrings strings = null)
         {
             return "No Entry Found";
         }
 
-        public static string GetDexEntry(int _species, LanguageID _language, SaveFile? savefile = null, GameStrings strings = null)
+        public static string GetDexEntry(int _species, LanguageID _language, SaveFile savefile = null, GameStrings strings = null)
         {
             return "No Entry Found";
         }
 
-        public static string GetDexEntry(string _species, SystemLanguage _language, GameVersion _version = GameVersion.SWSH, GameStrings strings = null, SaveFile? file = null)
+        public static string GetDexEntry(string _species, SystemLanguage _language, GameVersion _version = GameVersion.SWSH, GameStrings strings = null, SaveFile file = null)
         {
             var save = GetDefaultSave(_version, file);
             return GetDexEntry(GetSpeciesInt(_species), _language, save, strings);
         }
 
-        public static string GetDexEntry(string _species, LanguageID _language, GameVersion _version = GameVersion.SWSH, GameStrings strings = null, SaveFile? file = null)
+        public static string GetDexEntry(string _species, LanguageID _language, GameVersion _version = GameVersion.SWSH, GameStrings strings = null, SaveFile file = null)
         {
             var save = GetDefaultSave(_version, file);
             int speciesIndex = GetSpeciesInt(_species);
@@ -223,7 +223,7 @@ namespace PKHexForUnity
             return SaveUtil.GetBlankSAV(ver, pk.OT_Name, (LanguageID)pk.Language);
         }
 
-        public static SaveFile GetDefaultSave(GameVersion version = GameVersion.PLA, SaveFile? current = null)
+        public static SaveFile GetDefaultSave(GameVersion version = GameVersion.PLA, SaveFile current = null)
         {
             var lang = SaveUtil.GetSafeLanguage(current);
             var tr = SaveUtil.GetSafeTrainerName(current, lang);

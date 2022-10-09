@@ -13,7 +13,7 @@ namespace PKHexForUnity.PokeAPI
         public List<EggGroup> egg_groups;
         public EvolutionChain evolution_chain;
         public EvolutionFromSpecies evolves_from_species;
-        public List<FlavourData> flavor_text_entries;
+        public List<PokedexData> flavor_text_entries;
 
         public bool forms_switchable;
         public int gender_rate;
@@ -124,11 +124,11 @@ namespace PKHexForUnity.PokeAPI
 
 
         [System.Serializable]
-        public class FlavourData
+        public class PokedexData
         {
             public string flavor_text;
             public Language language;
-            public FlavourVersion version;
+            public PokedexVersion version;
         }
 
         [System.Serializable]
@@ -139,7 +139,7 @@ namespace PKHexForUnity.PokeAPI
         }
         
         [System.Serializable]
-        public class FlavourVersion
+        public class PokedexVersion
         {
             public string name;
             public string url;
