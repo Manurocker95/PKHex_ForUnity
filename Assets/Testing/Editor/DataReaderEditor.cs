@@ -17,7 +17,7 @@ namespace PKHexForUnity
             if (myTarget == null)
                 return;
 
-            myTarget.PokemonIndex = EditorGUILayout.IntSlider("Pokémon Index", myTarget.PokemonIndex, 1, 898);
+            myTarget.PokemonIndex = EditorGUILayout.IntSlider("Pokémon Index", myTarget.PokemonIndex, 1, 905);
             myTarget.Language = (LanguageID)EditorGUILayout.EnumPopup("Language", myTarget.Language);
 
             GUILayout.Space(20);
@@ -25,6 +25,12 @@ namespace PKHexForUnity
             if (GUILayout.Button("Generate Pokémon Data"))
             {
                 myTarget.GenerateMonster();
+            }
+
+
+            if (GUILayout.Button("Show Full Dex List"))
+            {
+                myTarget.ShowFullDexList();
             }
         }
     }

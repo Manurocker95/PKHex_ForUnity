@@ -12,7 +12,7 @@ namespace PKHexForUnity
     {
         public struct DataReaderPokemon
         {
-            public int ID;
+            public string ID;
             public string Species;
             public int PokemonDexNumber;
             public string PokemonDex;
@@ -43,7 +43,24 @@ namespace PKHexForUnity
         public virtual void GenerateMonster()
         {
             m_currentMonster = GetPokemonData();
-            Debug.Log(string.Format("ID {0} - Species {1} - PokemonDexNumber {2}", m_currentMonster.ID, m_currentMonster.Species, m_currentMonster.PokemonDexNumber));
+
+            Debug.Log(string.Format("ID: {0} - Species: {1} - PokemonDexNumber: {2} - PokemonDex: {3}", 
+                m_currentMonster.ID, 
+                m_currentMonster.Species, 
+                m_currentMonster.PokemonDexNumber,
+                m_currentMonster.PokemonDex));
+        }
+
+        public virtual void ShowFullDexList()
+        {
+            var names = PKHexUtils.GetFullDexNames(Language);
+            int idx = 0;
+            foreach (string name in names)
+            {
+                string dexIdx = "" + idx;
+                idx++;
+                Debug.Log(dexIdx + " - " + name);
+            }
         }
 
         public virtual DataReaderPokemon GetPokemonData()
@@ -51,12 +68,14 @@ namespace PKHexForUnity
             var species = PKHexUtils.GetSpeciesFromID(PokemonIndex, Language);
             var dexNumber = PKHexUtils.GetDexNumber(species, Language);
             var dex = PKHexUtils.GetDexEntry(species, Language);
+            var id = species.ToUpper();
 
             DataReaderPokemon pkmn = new DataReaderPokemon()
             {
-                ID = PokemonIndex,
+                ID = id,
                 Species = species,
-                PokemonDexNumber = dexNumber
+                PokemonDexNumber = dexNumber,
+                PokemonDex = dex
             };
 
             return pkmn;

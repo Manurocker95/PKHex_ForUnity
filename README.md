@@ -4,8 +4,9 @@ aka PKHex4Unity is a C# wrapper for PKHex usage in Unity Engine.
 
 Why? Because why not.
 
-
 You only need the PKHex folder inside Assets. To use it, add the define symbol #PKHEX_FOR_UNITY to your project. As the included SFB uses PKHexForUnity namespace, if you already have it in your project, you only need to delete the Plugins folder inside.
+
+For savefiles .NET 4.6 (NET Framework backend) is required due to MS System,Activator.CreateInstance not working on 3.5. (to create dynamic savLoader);
 
 If you need more info about PKHex and it's regular usage:
 https://github.com/kwsch/PKHeX

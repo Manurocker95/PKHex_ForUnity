@@ -16,12 +16,6 @@ namespace PKHexForUnity
             foreach (string nam in names)
             { Debug.Log(nam); }
         }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 
 }
