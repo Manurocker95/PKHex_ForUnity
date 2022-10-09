@@ -22,6 +22,21 @@ namespace PKHexForUnity
         zh2
     }
 
+    public enum SpeciesLanguageCodes
+    {
+        ja1,
+        ja,
+        en,
+        fr,
+        it,
+        de,
+        es,
+        es2,
+        ko,
+        zh,
+        zh2
+    }
+
     public enum PokemonGeneration
     {
         None = 0,
@@ -80,7 +95,20 @@ namespace PKHexForUnity
 			return dex;
 		}
 
-		public static List<string> GetFullDexNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+        public static List<string> GetFullDexNames(LanguageID _language, GameStrings gameStrings = null)
+        {
+            if (_language != LanguageID.English)
+            {
+
+                var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
+
+                return new List<string>(strings.specieslist);
+            }
+
+            return new List<string>(GameInfo.Strings.specieslist);
+        }
+
+        public static List<string> GetFullDexNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
             if (_language != SystemLanguage.English)
             {
@@ -93,12 +121,39 @@ namespace PKHexForUnity
             return new List<string>(GameInfo.Strings.specieslist);
 		}
 
-		public static int GetDexNumber(string _species)
+		public static int GetDexNumber(string _species, SystemLanguage _language = SystemLanguage.English, GameStrings strings = null)
 		{
-			return GetFullDexNames().IndexOf(_species);
+			return GetFullDexNames(_language, strings).IndexOf(_species);
 		}
 
-		public static int GetSpeciesInt(string _species)
+        public static int GetDexNumber(string _species, LanguageID _language, GameStrings strings = null)
+        {
+            return GetFullDexNames(_language, strings).IndexOf(_species);
+        }
+
+        public static string GetDexEntry(int _species, SystemLanguage _language, GameStrings strings = null)
+        {
+            return "No Entry Found";
+        }
+
+        public static string GetDexEntry(int _species, LanguageID _language, GameStrings strings = null)
+        {
+            return "No Entry Found";
+        }
+
+        public static string GetDexEntry(string _species, SystemLanguage _language, GameStrings strings = null)
+        {
+            int entryIdx = GetSpeciesLanguageListIndex(_language);
+            return GetDexEntry(entryIdx, _language, strings);
+        }
+
+        public static string GetDexEntry(string _species, LanguageID _language, GameStrings strings = null)
+        {
+            int entryIdx = GetSpeciesLanguageListIndex(_language);
+            return GetDexEntry(entryIdx, _language, strings);
+        }
+
+        public static int GetSpeciesInt(string _species)
 		{
 			return GetSpeciesID(_species);
 		}
@@ -202,12 +257,26 @@ namespace PKHexForUnity
 
 		public static int GetSpeciesID(string _species, SystemLanguage _language = SystemLanguage.English)
 		{
-			return SpeciesName.GetSpeciesID(_species, GetLanguageIndex(_language));
+            var langIDx = GetSpeciesLanguageListIndex(_language);
+            return SpeciesName.GetSpeciesID(_species, langIDx);
 		}
+
+        public static string GetSpeciesFromID(int _species, SystemLanguage _language = SystemLanguage.English)
+        {
+            var langIDx = GetSpeciesLanguageListIndex(_language);
+            return SpeciesName.GetSpeciesName((ushort)_species, langIDx);
+        }
+
+        public static string GetSpeciesFromID(int _species, LanguageID _language = LanguageID.English)
+        {
+            var langIDx = GetSpeciesLanguageListIndex(_language);
+            return SpeciesName.GetSpeciesName((ushort)_species, langIDx);
+        }
+
 
 
 #if UNITY_EDITOR
-		public static void AddUseIL2CPP()
+        public static void AddUseIL2CPP()
         {
 			string use = "USE_IL2CPP";
 			string definesString = UnityEditor.PlayerSettings.GetScriptingDefineSymbolsForGroup(UnityEditor.EditorUserBuildSettings.selectedBuildTargetGroup);
@@ -363,25 +432,59 @@ namespace PKHexForUnity
 		{
             if (_language != SystemLanguage.English)
             {
-
                 var strings = gameStrings != null ? gameStrings : GetLocalizedTexts(_language);
 
                 return strings.characteristics;
             }
             return GameInfo.Strings.characteristics;
 		}
-		
-		public static int GetLanguageIndex (LanguageID _language = LanguageID.English)
+
+        public static List<string> GetSpeciesLanguageList()
+        {
+            return new List<string>()
+            {
+                "ja",
+                "ja",
+                "en",
+                "fr",
+                "it",
+                "de",
+                "es",
+                "es",
+                "ko",
+                "zh",
+                "zh2"
+            };
+        }
+
+        public static int GetSpeciesLanguageListIndex(SystemLanguage _language = SystemLanguage.English)
+        {
+            return GetSpeciesLanguageList().IndexOf(GetLanguageCode(_language));
+        }
+
+        public static int GetSpeciesLanguageListIndex(LanguageID _language = LanguageID.English)
+        {
+            return GetSpeciesLanguageList().IndexOf(GetLanguageCode(_language));
+        }
+
+        public static int GetLanguageIndex (LanguageID _language = LanguageID.English)
 		{
-            return GameLanguage.GetLanguageIndex(GetLanguageCode(_language));
+            string languagCode = GetLanguageCode(_language);
+            return GameLanguage.GetLanguageIndex(languagCode);
         }
 
 		public static int GetLanguageIndex (SystemLanguage _language = SystemLanguage.English)
 		{
-			return GameLanguage.GetLanguageIndex(GetLanguageCode(_language));
+            string languagCode = GetLanguageCode(_language);
+            return GameLanguage.GetLanguageIndex(languagCode);
 		}
 
 		public static GameStrings GetLocalizedTexts(SystemLanguage _language = SystemLanguage.English)
+		{
+            return GameInfo.GetStrings(GetLanguageCode(_language));
+        }	
+        
+        public static GameStrings GetLocalizedTexts(LanguageID _language = LanguageID.English)
 		{
             return GameInfo.GetStrings(GetLanguageCode(_language));
         }
@@ -544,7 +647,7 @@ namespace PKHexForUnity
 
             return GameInfo.Strings.balllist;
 		}
-		
+
 		public static IEnumerable<string> GetTypes(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
             if (_language != SystemLanguage.English)
@@ -719,12 +822,14 @@ namespace PKHexForUnity
 
 		public static string GetPokemonSpeciesNameInLanguage(PKM pokemon, SystemLanguage _language)
         {
-            return GetPokemonSpeciesNameInLanguage(pokemon, GetLanguageIndex(_language));
+            var langIDx = GetSpeciesLanguageListIndex(_language);
+            return GetPokemonSpeciesNameInLanguage(pokemon, langIDx);
         }
 
         public static string GetPokemonSpeciesNameInLanguage(PKM pokemon, LanguageID _language)
         {
-            return SpeciesName.GetSpeciesName(pokemon.Species, GetLanguageIndex(_language));
+            var langIDx = GetSpeciesLanguageListIndex(_language);
+            return SpeciesName.GetSpeciesName(pokemon.Species, langIDx);
         }
 
         public static string GetPokemonSpeciesNameInLanguage(PKM pokemon, int _language)
@@ -754,6 +859,7 @@ namespace PKHexForUnity
             var sav = SaveUtil.GetVariantSAV(data);
             return sav.Version;
         }
+
 
         public static SaveFile LoadSaveFile (string sav, PokemonGeneration gen = PokemonGeneration.Kanto)
         {

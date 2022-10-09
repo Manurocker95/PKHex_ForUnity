@@ -1,6 +1,6 @@
-# PKHex_ForUnity
+# PKHex For Unity
 
-PKHex usage in Unity Engine.
+aka PKHex4Unity is a C# wrapper for PKHex usage in Unity Engine.
 
 Why? Because why not.
 
