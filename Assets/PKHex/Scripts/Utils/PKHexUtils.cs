@@ -751,6 +751,7 @@ namespace PKHexForUnity
             }
             return GameInfo.Strings.Types;
         }
+
 		public static IEnumerable<string> GetAbilities(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
             if (_language != SystemLanguage.English)
@@ -760,6 +761,20 @@ namespace PKHexForUnity
                 return strings.Ability;
             }
             return GameInfo.Strings.Ability;
+		}	
+        
+        public static IEnumerable<string> GetSpecies(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+		{
+            if (_language != SystemLanguage.English)
+            {
+                var langIDx = GetSpeciesLanguageListIndex(_language);
+                return SpeciesName.SpeciesLang[langIDx];
+            }
+
+            if (gameStrings != null)
+                return gameStrings.Species;
+
+            return GameInfo.Strings.Species;
 		}
 		
 		public static IEnumerable<string> GetItemNames(int _generation, GameVersion _version = GameVersion.Any, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
