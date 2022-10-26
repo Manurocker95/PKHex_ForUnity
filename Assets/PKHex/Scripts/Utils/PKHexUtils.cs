@@ -70,6 +70,22 @@ namespace PKHexForUnity
     public static class PKHexUtils
 	{
 
+#if UNITY_EDITOR
+        [UnityEditor.MenuItem("PKHex4Unity/Show Version")]
+#endif
+        public static void ShowVersion()
+        {
+#if UNITY_EDITOR
+            string version = "1.0.0";
+            string path = Application.dataPath + "/PKHex/version.txt";
+            if (System.IO.File.Exists(path))
+            {
+                version = System.IO.File.ReadAllText(path);
+            }
+            UnityEditor.EditorUtility.DisplayDialog("PKHex For Unity", "Version: " + version, "Ok");
+#endif
+        }
+
 		public static bool IsIL2CPPEnabled()
 		{
 #if UNITY_EDITOR

@@ -238,7 +238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PokemonIndex: 25
-  Language: 2
+  Language: 10
   PokeAPILoader: {fileID: 830564518}
 --- !u!4 &830564517
 Transform:
@@ -267,6 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddd44e776335e654cbe557134e4cec9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Version: 26
   m_pokedex:
     Pokemon: []
 --- !u!1 &1770408875
