@@ -10,16 +10,47 @@ namespace PKHexForUnity
     [CustomEditor(typeof(DataReader))]
     public class DataReaderEditor : Editor
     {
+        protected int m_maxPokemon = 905;
+        protected PokemonGeneration m_lastGeneration = PokemonGeneration.None;
+
+        protected DataReader myTarget;
+
+        protected virtual void OnEnable()
+        {
+            myTarget = (DataReader)target;
+            SetMaxPokemon(m_lastGeneration);
+        }
+
+        protected virtual void SetMaxPokemon(PokemonGeneration _newGen)
+        {
+            m_lastGeneration = _newGen;
+            m_maxPokemon = PKHexUtils.GetDexCount(m_lastGeneration);
+            if (myTarget != null)
+            {
+                if (myTarget.PokemonIndex > m_maxPokemon)
+                {
+                    myTarget.PokemonIndex = m_maxPokemon;
+                }
+            }
+        }
+
         public override void OnInspectorGUI()
         {
-            DataReader myTarget = (DataReader)target;
+            if (myTarget == null)
+                myTarget = (DataReader)target;
 
             if (myTarget == null)
                 return;
 
             EditorGUILayout.LabelField("PKHex For Unity ");
-            myTarget.PokemonIndex = EditorGUILayout.IntSlider("Pokémon Index", myTarget.PokemonIndex, 1, 905);
+            myTarget.PokemonIndex = EditorGUILayout.IntSlider("Pokémon Index", myTarget.PokemonIndex, 1, m_maxPokemon);
             myTarget.Language = (LanguageID)EditorGUILayout.EnumPopup("Language", myTarget.Language);
+            myTarget.Generation = (PokemonGeneration)EditorGUILayout.EnumPopup("Generation", myTarget.Generation);
+
+            if (m_lastGeneration != myTarget.Generation)
+            {
+                SetMaxPokemon(myTarget.Generation);
+            }
 
             GUILayout.Space(20);
 

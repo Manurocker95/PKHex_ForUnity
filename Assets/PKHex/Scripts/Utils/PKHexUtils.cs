@@ -126,6 +126,11 @@ namespace PKHexForUnity
             return new List<string>(GameInfo.Strings.specieslist);
         }
 
+        public static int GetFullDexCount()
+        {
+            return GetFullDexNames().Count;
+        }
+
         public static int GetDexCount(PokemonGeneration generation = PokemonGeneration.LegendsArceus)
         {
             switch (generation)
@@ -160,8 +165,10 @@ namespace PKHexForUnity
                     return 898;
                 case PokemonGeneration.LegendsArceus:
                     return 905;
+                case PokemonGeneration.ScarletViolet:
+                    return 1011;
                 default:
-                    return 905;
+                    return 1011;
             }
         }
 

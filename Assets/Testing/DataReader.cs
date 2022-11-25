@@ -20,10 +20,16 @@ namespace PKHexForUnity
 
         public int PokemonIndex = 1;
         public LanguageID Language = LanguageID.English;
+        public PokemonGeneration Generation = PokemonGeneration.Kanto;
 
         public PokeAPILoader PokeAPILoader;
 
         protected DataReaderPokemon m_currentMonster;
+
+        protected virtual void Reset()
+        {
+            PokeAPILoader = GetComponent<PokeAPILoader>();
+        }
 
         // Start is called before the first frame update
         protected virtual void Start()

@@ -40,7 +40,8 @@ namespace PKHexForUnity.PokeAPI
         shield,
         brilliantdiamond,
         shiningpearl,
-        legendsarceus
+        legendsarceus,
+        scarletviolet
     }
 
     public class PokeAPILoader : MonoBehaviour
@@ -48,6 +49,8 @@ namespace PKHexForUnity.PokeAPI
         public PokemonVersions Version = PokemonVersions.red;
 
         [SerializeField] protected PokedexAPI m_pokedex;
+
+
 
         public virtual string GetGameID(PokemonVersions generation)
         {
@@ -71,6 +74,8 @@ namespace PKHexForUnity.PokeAPI
                     return "shining-pearl";
                 case PokemonVersions.legendsarceus:
                     return "legends-arceus";
+                case PokemonVersions.scarletviolet:
+                    return "scarlet-violet";
             }
 
             return generation.ToString();
@@ -114,6 +119,8 @@ namespace PKHexForUnity.PokeAPI
                     return new List<string>() { "brilliant-diamond", "shining-pearl" };
                 case PokemonGeneration.LegendsArceus:
                     return new List<string>() { "legends-arceus" };
+                case PokemonGeneration.ScarletViolet:
+                    return new List<string>() { "scarlet-violet" };
                 default:
                     return new List<string>() { "red", "blue", "yellow" };
             }
