@@ -166,10 +166,15 @@ namespace PKHexForUnity
                 case PokemonGeneration.LegendsArceus:
                     return 905;
                 case PokemonGeneration.ScarletViolet:
-                    return 1011;
+                    return 1010;
                 default:
-                    return 1011;
+                    return 1010;
             }
+        }
+
+        public static string GetTeratypeFromPokemon(PK9 _pokemon, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+        {
+            return GetTypeInLanguage(_pokemon.TeraType.ToString());
         }
 
         public static List<string> GetFullDexNames(SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
@@ -338,7 +343,35 @@ namespace PKHexForUnity
 			return pkmnAbilities;
 		}
 
-		public static IEnumerable<string> GetPokemonTypes(PKM _pkm, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+        public static string GetTypeInLanguage(string _type, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
+        {
+            if (_language == SystemLanguage.English)
+                return _type;
+
+            var originalTypes = GetTypes(SystemLanguage.English);
+            var types = GetTypes(_language, gameStrings);
+
+            return types.ElementAt(originalTypes.IndexOf(_type));
+        }
+
+        public static int IndexOf<T>(this IEnumerable<T> enumerable, T element, IEqualityComparer<T> comparer = null)
+        {
+            int i = 0;
+            comparer = comparer ?? EqualityComparer<T>.Default;
+            foreach (var currentElement in enumerable)
+            {
+                if (comparer.Equals(currentElement, element))
+                {
+                    return i;
+                }
+
+                i++;
+            }
+
+            return -1;
+        }
+
+        public static IEnumerable<string> GetPokemonTypes(PKM _pkm, SystemLanguage _language = SystemLanguage.English, GameStrings gameStrings = null)
 		{
 			var personalInfo = _pkm.PersonalInfo;
 			int type1 = personalInfo.Type1;
