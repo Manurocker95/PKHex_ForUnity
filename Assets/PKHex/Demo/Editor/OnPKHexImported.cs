@@ -9,33 +9,56 @@ namespace PKHexForUnity
     public class OnPKHexImported : AssetPostprocessor
     {
         public const bool CHECK_DEFINE_ON_IMPORT = true;
+        public const string PKHEX_WRONG_NET_PLAYER_PREF = "PKHEX_WRONG_NET";
 
         protected static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
-            if (CHECK_DEFINE_ON_IMPORT && !IsPKHexForUnityAdded)
+            if (CHECK_DEFINE_ON_IMPORT)
             {
-                bool needToCheck = false;
-                foreach (string importedAsset in importedAssets)
+                if (!IsPKHexForUnityAdded)
                 {
-                    if (importedAsset.Contains("OnPKHexImported.cs"))
+                    bool needToCheck = false;
+                    foreach (string importedAsset in importedAssets)
                     {
-                        needToCheck = true;
-                        break;
+                        if (importedAsset.Contains("OnPKHexImported.cs"))
+                        {
+                            needToCheck = true;
+                            break;
+                        }
+                    }
+
+                    if (needToCheck)
+                    {
+                        TryAddCoreDefineSymbols();
                     }
                 }
-
-                if (needToCheck)
+                
+                if (!IsNet46Active)
                 {
-                    TryAddCoreDefineSymbols();
+                    if (PlayerPrefs.GetInt(PKHEX_WRONG_NET_PLAYER_PREF, 0) == 0)
+                    {
+                        if (EditorUtility.DisplayDialog("Wrong NET Framework", "PKHex4Unity requires NET 4.6 or higher (NET Framework) as Scripting API. Please, change it in Player Settings.", "Ok"))
+                        {
+                            PlayerPrefs.SetInt(PKHEX_WRONG_NET_PLAYER_PREF, 1);
+                        }
+                    }
+                }
+                else
+                {
+
+                    if (PlayerPrefs.GetInt(PKHEX_WRONG_NET_PLAYER_PREF, 0) == 0)
+                    {
+                        PlayerPrefs.SetInt(PKHEX_WRONG_NET_PLAYER_PREF, 1);
+                    }
                 }
             }
         }
-
+                            
         public static string[] GetRequiredDefineSymbols()
         {
             return new string[]
             {
-                    "PKHEX_FOR_UNITY"
+                "PKHEX_FOR_UNITY"
             };
         }
 
@@ -56,6 +79,12 @@ namespace PKHexForUnity
         public static bool IsPKHexForUnityAdded => true;
 #else
         public bool IsPKHexForUnityAdded => false;
+#endif
+
+#if NET_4_6
+        public static bool IsNet46Active => true;
+#else
+        public static bool IsNet46Active => false;
 #endif
 
 
