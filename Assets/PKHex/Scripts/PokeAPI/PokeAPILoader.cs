@@ -333,7 +333,7 @@ namespace PKHexForUnity.PokeAPI
 
         public virtual void SaveDexToJSON(PokedexAPI dex)
         {
-            string path = Application.dataPath + "/Parsed Dex From API/";
+            string path = Application.dataPath + "/PKHex/Data/Parsed Dex From API/";
 
             if (!System.IO.Directory.Exists(path))
                 System.IO.Directory.CreateDirectory(path);

@@ -104,7 +104,7 @@ NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +117,7 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
     maxJobWorkers: 0
     preserveTilesOutsideBounds: 0
     debug:
@@ -163,9 +163,17 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -237,9 +245,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e019a1423f1f55a4d812fedea5cd37ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PokemonIndex: 991
+  PokemonIndex: 151
   Language: 3
-  Generation: 17
+  Generation: 8
   PokeAPILoader: {fileID: 830564518}
 --- !u!4 &830564517
 Transform:
@@ -268,9 +276,976 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddd44e776335e654cbe557134e4cec9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Version: 30
-  m_pokedex:
-    Pokemon: []
+  Version: 26
+  m_loadedMon:
+    capture_rate: 45
+    color:
+      name: green
+      url: https://pokeapi.co/api/v2/pokemon-color/5/
+    egg_groups:
+    - name: monster
+      url: https://pokeapi.co/api/v2/egg-group/1/
+    - name: plant
+      url: https://pokeapi.co/api/v2/egg-group/7/
+    evolution_chain:
+      url: https://pokeapi.co/api/v2/evolution-chain/1/
+    evolves_from_species:
+      name: 
+      url: 
+    flavor_text_entries:
+    - flavor_text: "A strange seed was\nplanted on its\nback at birth.\fThe plant
+        sprouts\nand grows with\nthis POK\xE9MON."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: red
+        url: https://pokeapi.co/api/v2/version/1/
+    - flavor_text: "A strange seed was\nplanted on its\nback at birth.\fThe plant
+        sprouts\nand grows with\nthis POK\xE9MON."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: blue
+        url: https://pokeapi.co/api/v2/version/2/
+    - flavor_text: "It can go for days\nwithout eating a\nsingle morsel.\fIn the
+        bulb on\nits back, it\nstores energy."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: yellow
+        url: https://pokeapi.co/api/v2/version/3/
+    - flavor_text: "The seed on its\nback is filled\nwith nutrients.\fThe seed grows\nsteadily
+        larger as\nits body grows."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: gold
+        url: https://pokeapi.co/api/v2/version/4/
+    - flavor_text: "It carries a seed\non its back right\nfrom birth. As it\fgrows
+        older, the\nseed also grows\nlarger."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: silver
+        url: https://pokeapi.co/api/v2/version/5/
+    - flavor_text: "While it is young,\nit uses the\nnutrients that are\fstored in
+        the\nseeds on its back\nin order to grow."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: crystal
+        url: https://pokeapi.co/api/v2/version/6/
+    - flavor_text: "BULBASAUR can be seen napping in\nbright sunlight.\nThere is
+        a seed on its back.\fBy soaking up the sun\u2019s rays, the seed\ngrows progressively
+        larger."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: ruby
+        url: https://pokeapi.co/api/v2/version/7/
+    - flavor_text: "BULBASAUR can be seen napping in\nbright sunlight.\nThere is
+        a seed on its back.\fBy soaking up the sun\u2019s rays, the seed\ngrows progressively
+        larger."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: sapphire
+        url: https://pokeapi.co/api/v2/version/8/
+    - flavor_text: "BULBASAUR can be seen napping in bright\nsunlight. There is a
+        seed on its back.\nBy soaking up the sun\u2019s rays, the seed\ngrows progressively
+        larger."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: emerald
+        url: https://pokeapi.co/api/v2/version/9/
+    - flavor_text: "There is a plant seed on its back right\nfrom the day this POK\xE9MON
+        is born.\nThe seed slowly grows larger."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: firered
+        url: https://pokeapi.co/api/v2/version/10/
+    - flavor_text: "A strange seed was planted on its back at\nbirth. The plant sprouts
+        and grows with\nthis POK\xE9MON."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: leafgreen
+        url: https://pokeapi.co/api/v2/version/11/
+    - flavor_text: 'For some time after its birth, it
+
+        grows by gaining nourishment
+        from
+
+        the seed on its back.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: diamond
+        url: https://pokeapi.co/api/v2/version/12/
+    - flavor_text: 'For some time after its birth, it
+
+        grows by gaining nourishment
+        from
+
+        the seed on its back.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: pearl
+        url: https://pokeapi.co/api/v2/version/13/
+    - flavor_text: 'For some time after its birth, it
+
+        grows by gaining nourishment
+        from
+
+        the seed on its back.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: platinum
+        url: https://pokeapi.co/api/v2/version/14/
+    - flavor_text: 'The seed on its back is filled
+
+        with nutrients. The seed
+        grows
+
+        steadily larger as its body grows.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: heartgold
+        url: https://pokeapi.co/api/v2/version/15/
+    - flavor_text: 'It carries a seed on its back right
+
+        from birth. As it
+        grows older, the
+
+        seed also grows larger.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: soulsilver
+        url: https://pokeapi.co/api/v2/version/16/
+    - flavor_text: "Au matin de sa vie, la graine sur\nson dos lui fournit les \xE9l\xE9ments\ndont
+        il a besoin pour grandir."
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: black
+        url: https://pokeapi.co/api/v2/version/17/
+    - flavor_text: 'For some time after its birth, it
+
+        grows by gaining nourishment
+        from
+
+        the seed on its back.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: black
+        url: https://pokeapi.co/api/v2/version/17/
+    - flavor_text: "Au matin de sa vie, la graine sur\nson dos lui fournit les \xE9l\xE9ments\ndont
+        il a besoin pour grandir."
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: white
+        url: https://pokeapi.co/api/v2/version/18/
+    - flavor_text: 'For some time after its birth, it
+
+        grows by gaining nourishment
+        from
+
+        the seed on its back.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: white
+        url: https://pokeapi.co/api/v2/version/18/
+    - flavor_text: 'For some time after its birth, it
+
+        grows by gaining nourishment
+        from
+
+        the seed on its back.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: black-2
+        url: https://pokeapi.co/api/v2/version/21/
+    - flavor_text: 'For some time after its birth, it
+
+        grows by gaining nourishment
+        from
+
+        the seed on its back.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: white-2
+        url: https://pokeapi.co/api/v2/version/22/
+    - flavor_text: "\u3046\u307E\u308C\u305F\u3068\u304D\u304B\u3089\u3000\u305B\u306A\u304B\u306B\n\u3075\u3057\u304E\u306A\u3000\u30BF\u30CD\u304C\u3000\u3046\u3048\u3066\u3042\u3063\u3066\n\u304B\u3089\u3060\u3068\u3000\u3068\u3082\u306B\u3000\u305D\u3060\u3064\u3068\u3044\u3046\u3002"
+      language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+      version:
+        name: x
+        url: https://pokeapi.co/api/v2/version/23/
+    - flavor_text: "\uD0DC\uC5B4\uB0AC\uC744 \uB54C\uBD80\uD130 \uB4F1\uC5D0\n\uC774\uC0C1\uD55C
+        \uC528\uC557\uC774 \uC2EC\uC5B4\uC838 \uC788\uC73C\uBA70\n\uBAB8\uACFC \uD568\uAED8
+        \uC790\uB780\uB2E4\uACE0 \uD55C\uB2E4."
+      language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+      version:
+        name: x
+        url: https://pokeapi.co/api/v2/version/23/
+    - flavor_text: "Il a une \xE9trange graine plant\xE9e sur son dos.\nElle grandit
+        avec lui depuis sa naissance."
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: x
+        url: https://pokeapi.co/api/v2/version/23/
+    - flavor_text: "Dieses Pok\xE9mon tr\xE4gt von Geburt an einen Samen\nauf dem
+        R\xFCcken, der mit ihm keimt und w\xE4chst."
+      language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+      version:
+        name: x
+        url: https://pokeapi.co/api/v2/version/23/
+    - flavor_text: "Una rara semilla le fue plantada en el lomo al nacer.\nLa planta
+        brota y crece con este Pok\xE9mon."
+      language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+      version:
+        name: x
+        url: https://pokeapi.co/api/v2/version/23/
+    - flavor_text: "Alla nascita gli \xE8 stato piantato sulla schiena un seme\nraro.
+        La pianta sboccia e cresce con lui."
+      language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+      version:
+        name: x
+        url: https://pokeapi.co/api/v2/version/23/
+    - flavor_text: "A strange seed was planted on its back at birth.\nThe plant sprouts
+        and grows with this Pok\xE9mon."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: x
+        url: https://pokeapi.co/api/v2/version/23/
+    - flavor_text: "\u751F\u307E\u308C\u305F\u3068\u304D\u304B\u3089\u3000\u80CC\u4E2D\u306B\n\u4E0D\u601D\u8B70\u306A\u3000\u30BF\u30CD\u304C\u3000\u690D\u3048\u3066\u3042\u3063\u3066\n\u4F53\u3068\u3000\u3068\u3082\u306B\u3000\u80B2\u3064\u3068\u3044\u3046\u3002"
+      language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+      version:
+        name: x
+        url: https://pokeapi.co/api/v2/version/23/
+    - flavor_text: "\u3046\u307E\u308C\u3066\u304B\u3089\u3000\u3057\u3070\u3089\u304F\u306E\u3000\u3042\u3044\u3060\u306F\n\u305B\u306A\u304B\u306E\u3000\u30BF\u30CD\u304B\u3089\u3000\u3048\u3044\u3088\u3046\u3092\n\u3082\u3089\u3063\u3066\u3000\u304A\u304A\u304D\u304F\u3000\u305D\u3060\u3064\u3002"
+      language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+      version:
+        name: y
+        url: https://pokeapi.co/api/v2/version/24/
+    - flavor_text: "\uD0DC\uC5B4\uB098\uC11C\uBD80\uD130 \uC5BC\uB9C8 \uB3D9\uC548\uC740\n\uB4F1\uC758
+        \uC528\uC557\uC73C\uB85C\uBD80\uD130 \uC601\uC591\uC744\n\uACF5\uAE09\uBC1B\uC544
+        \uD06C\uAC8C \uC131\uC7A5\uD55C\uB2E4."
+      language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+      version:
+        name: y
+        url: https://pokeapi.co/api/v2/version/24/
+    - flavor_text: "Au matin de sa vie, la graine sur son dos lui fournit\nles \xE9l\xE9ments
+        dont il a besoin pour grandir."
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: y
+        url: https://pokeapi.co/api/v2/version/24/
+    - flavor_text: "Nach der Geburt nimmt es f\xFCr eine Weile N\xE4hrstoffe\n\xFCber
+        den Samen auf seinem R\xFCcken auf."
+      language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+      version:
+        name: y
+        url: https://pokeapi.co/api/v2/version/24/
+    - flavor_text: "Despu\xE9s de nacer, crece aliment\xE1ndose de las\nsemillas
+        de su lomo."
+      language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+      version:
+        name: y
+        url: https://pokeapi.co/api/v2/version/24/
+    - flavor_text: 'Dopo la nascita, cresce traendo nutrimento dal seme
+
+        piantato
+        sul suo dorso.'
+      language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+      version:
+        name: y
+        url: https://pokeapi.co/api/v2/version/24/
+    - flavor_text: 'For some time after its birth, it grows by gaining
+
+        nourishment
+        from the seed on its back.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: y
+        url: https://pokeapi.co/api/v2/version/24/
+    - flavor_text: "\u751F\u307E\u308C\u3066\u304B\u3089\u3000\u3057\u3070\u3089\u304F\u306E\u3000\u3042\u3044\u3060\u306F\n\u80CC\u4E2D\u306E\u3000\u30BF\u30CD\u304B\u3089\u3000\u6804\u990A\u3092\u3000\u3082\u3089\u3063\u3066\n\u5927\u304D\u304F\u3000\u80B2\u3064\u3002"
+      language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+      version:
+        name: y
+        url: https://pokeapi.co/api/v2/version/24/
+    - flavor_text: "\u3072\u306A\u305F\u3067\u3000\u3072\u308B\u306D\u3092\u3000\u3059\u308B\u3000\u3059\u304C\u305F\u3092\u3000\u307F\u304B\u3051\u308B\u3002\n\u305F\u3044\u3088\u3046\u306E\u3000\u3072\u304B\u308A\u3092\u3000\u3044\u3063\u3071\u3044\u3000\u3042\u3073\u308B\u3053\u3068\u3067\n\u305B\u306A\u304B\u306E\u3000\u30BF\u30CD\u304C\u3000\u304A\u304A\u304D\u304F\u3000\u305D\u3060\u3064\u306E\u3060\u3002"
+      language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+      version:
+        name: omega-ruby
+        url: https://pokeapi.co/api/v2/version/25/
+    - flavor_text: "\uC591\uC9C0\uC5D0\uC11C \uB0AE\uC7A0 \uC790\uB294 \uBAA8\uC2B5\uC744
+        \uBCFC \uC218 \uC788\uB2E4.\n\uD0DC\uC591\uC758 \uBE5B\uC744 \uB9CE\uC774
+        \uBC1B\uC73C\uBA74\n\uB4F1\uC758 \uC528\uC557\uC774 \uD06C\uAC8C \uC790\uB780\uB2E4."
+      language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+      version:
+        name: omega-ruby
+        url: https://pokeapi.co/api/v2/version/25/
+    - flavor_text: "Bulbizarre passe son temps \xE0 faire la sieste sous le soleil.\nIl
+        y a une graine sur son dos. Il absorbe les rayons du soleil\npour faire doucement
+        pousser la graine."
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: omega-ruby
+        url: https://pokeapi.co/api/v2/version/25/
+    - flavor_text: "Bisasam macht gern einmal ein Nickerchen im\nSonnenschein. Auf
+        seinem R\xFCcken tr\xE4gt es einen\nSamen. Indem es Sonnenstrahlen aufsaugt,\nwird
+        der Samen zunehmend gr\xF6\xDFer."
+      language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+      version:
+        name: omega-ruby
+        url: https://pokeapi.co/api/v2/version/25/
+    - flavor_text: "A Bulbasaur es f\xE1cil verle ech\xE1ndose una siesta al sol.\nLa
+        semilla que tiene en el lomo va creciendo cada vez m\xE1s\na medida que absorbe
+        los rayos del sol."
+      language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+      version:
+        name: omega-ruby
+        url: https://pokeapi.co/api/v2/version/25/
+    - flavor_text: "\xC8 possibile vedere Bulbasaur mentre schiaccia un pisolino\nsotto
+        il sole. Ha un seme piantato sulla schiena. Grazie ai\nraggi solari il seme
+        cresce ingrandendosi progressivamente."
+      language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+      version:
+        name: omega-ruby
+        url: https://pokeapi.co/api/v2/version/25/
+    - flavor_text: "Bulbasaur can be seen napping in bright sunlight.\nThere is a
+        seed on its back. By soaking up the sun\u2019s rays,\nthe seed grows progressively
+        larger."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: omega-ruby
+        url: https://pokeapi.co/api/v2/version/25/
+    - flavor_text: "\u65E5\u306A\u305F\u3067\u3000\u663C\u5BDD\u3092\u3000\u3059\u308B\u3000\u59FF\u3092\u3000\u898B\u304B\u3051\u308B\u3002\n\u592A\u967D\u306E\u3000\u5149\u3092\u3000\u3044\u3063\u3071\u3044\u3000\u6D74\u3073\u308B\u3053\u3068\u3067\n\u80CC\u4E2D\u306E\u3000\u30BF\u30CD\u304C\u3000\u5927\u304D\u304F\u3000\u80B2\u3064\u306E\u3060\u3002"
+      language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+      version:
+        name: omega-ruby
+        url: https://pokeapi.co/api/v2/version/25/
+    - flavor_text: "\u3072\u306A\u305F\u3067\u3000\u3072\u308B\u306D\u3092\u3000\u3059\u308B\u3000\u3059\u304C\u305F\u3092\u3000\u307F\u304B\u3051\u308B\u3002\n\u305F\u3044\u3088\u3046\u306E\u3000\u3072\u304B\u308A\u3092\u3000\u3044\u3063\u3071\u3044\u3000\u3042\u3073\u308B\u3053\u3068\u3067\n\u305B\u306A\u304B\u306E\u3000\u30BF\u30CD\u304C\u3000\u304A\u304A\u304D\u304F\u3000\u305D\u3060\u3064\u306E\u3060\u3002"
+      language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+      version:
+        name: alpha-sapphire
+        url: https://pokeapi.co/api/v2/version/26/
+    - flavor_text: "\uC591\uC9C0\uC5D0\uC11C \uB0AE\uC7A0 \uC790\uB294 \uBAA8\uC2B5\uC744
+        \uBCFC \uC218 \uC788\uB2E4.\n\uD0DC\uC591\uC758 \uBE5B\uC744 \uB9CE\uC774
+        \uBC1B\uC73C\uBA74\n\uB4F1\uC758 \uC528\uC557\uC774 \uD06C\uAC8C \uC790\uB780\uB2E4."
+      language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+      version:
+        name: alpha-sapphire
+        url: https://pokeapi.co/api/v2/version/26/
+    - flavor_text: "Bulbizarre passe son temps \xE0 faire la sieste sous le soleil.\nIl
+        y a une graine sur son dos. Il absorbe les rayons du soleil\npour faire doucement
+        pousser la graine."
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: alpha-sapphire
+        url: https://pokeapi.co/api/v2/version/26/
+    - flavor_text: "Bisasam macht gern einmal ein Nickerchen im\nSonnenschein. Auf
+        seinem R\xFCcken tr\xE4gt es einen\nSamen. Indem es Sonnenstrahlen aufsaugt,\nwird
+        er zunehmend gr\xF6\xDFer."
+      language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+      version:
+        name: alpha-sapphire
+        url: https://pokeapi.co/api/v2/version/26/
+    - flavor_text: "A Bulbasaur es f\xE1cil verle ech\xE1ndose una siesta al sol.\nLa
+        semilla que tiene en el lomo va creciendo cada vez m\xE1s\na medida que absorbe
+        los rayos del sol."
+      language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+      version:
+        name: alpha-sapphire
+        url: https://pokeapi.co/api/v2/version/26/
+    - flavor_text: "\xC8 possibile vedere Bulbasaur mentre schiaccia un pisolino\nsotto
+        il sole. Ha un seme piantato sulla schiena. Grazie ai\nraggi solari il seme
+        cresce ingrandendosi progressivamente."
+      language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+      version:
+        name: alpha-sapphire
+        url: https://pokeapi.co/api/v2/version/26/
+    - flavor_text: "Bulbasaur can be seen napping in bright sunlight.\nThere is a
+        seed on its back. By soaking up the sun\u2019s rays,\nthe seed grows progressively
+        larger."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: alpha-sapphire
+        url: https://pokeapi.co/api/v2/version/26/
+    - flavor_text: "\u65E5\u306A\u305F\u3067\u3000\u663C\u5BDD\u3092\u3000\u3059\u308B\u3000\u59FF\u3092\u3000\u898B\u304B\u3051\u308B\u3002\n\u592A\u967D\u306E\u3000\u5149\u3092\u3000\u3044\u3063\u3071\u3044\u3000\u6D74\u3073\u308B\u3053\u3068\u3067\n\u80CC\u4E2D\u306E\u3000\u30BF\u30CD\u304C\u3000\u5927\u304D\u304F\u3000\u80B2\u3064\u306E\u3060\u3002"
+      language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+      version:
+        name: alpha-sapphire
+        url: https://pokeapi.co/api/v2/version/26/
+    - flavor_text: "\u306A\u3093\u306B\u3061\u3060\u3063\u3066\u3000\u306A\u306B\u3082\u3000\u305F\u3079\u306A\u304F\u3066\u3082\n\u3052\u3093\u304D\uFF01\u3000\u305B\u306A\u304B\u306E\u30BF\u30CD\u306B\u3000\u305F\u304F\u3055\u3093\n\u3048\u3044\u3088\u3046\u304C\u3000\u3042\u308B\u304B\u3089\u3000\u3078\u3044\u304D\u3060\uFF01"
+      language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: "\uBA70\uCE60 \uB3D9\uC548 \uC544\uBB34\uAC83\uB3C4 \uBA39\uC9C0
+        \uC54A\uC544\uB3C4\n\uAC74\uAC15\uD558\uB2E4! \uB4F1\uC5D0 \uC788\uB294 \uC528\uC557\uC5D0\uB294\n\uB9CE\uC740
+        \uC601\uC591\uBD84\uC774 \uC788\uC5B4\uC11C \uBB38\uC81C\uC5C6\uB2E4!"
+      language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: "\u80CC\u4E0A\u7684\u7A2E\u5B50\u88E1\u5B58\u8457\u5F88\u591A\u71DF\u990A\uFF0C\n\u6240\u4EE5\u5C31\u7B97\u597D\u5E7E\u5929\u4E0D\u5403\u6771\u897F\n\u4E5F\u80FD\u6D3B\u5F97\u597D\u597D\u7684\uFF01"
+      language:
+        name: zh-Hant
+        url: https://pokeapi.co/api/v2/language/4/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: "Il peut survivre plusieurs jours sans manger\ngr\xE2ce aux nutriments
+        contenus dans le bulbe\nsur son dos."
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: "Es kommt tagelang ohne Nahrung aus, da es\nin den Samen auf seinem
+        R\xFCcken N\xE4hrstoffe\nspeichert."
+      language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: 'Puede sobrevivir largo tiempo sin probar
+
+        bocado gracias
+        a los nutrientes que guarda
+
+        en el bulbo del lomo.'
+      language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: "Questo Pok\xE9mon pu\xF2 stare a lungo senza\nmangiare. Accumula
+        energia nel bulbo che\nha sulla schiena."
+      language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: 'It can go for days without eating a single morsel.
+
+        In
+        the bulb on its back, it stores energy.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: "\u4F55\u65E5\u3060\u3063\u3066\u3000\u306A\u306B\u3082\u3000\u98DF\u3079\u306A\u304F\u3066\u3082\n\u5143\u6C17\uFF01\u3000\u80CC\u4E2D\u306E\u30BF\u30CD\u306B\u3000\u305F\u304F\u3055\u3093\n\u6804\u990A\u304C\u3000\u3042\u308B\u304B\u3089\u3000\u5E73\u6C17\u3060\uFF01"
+      language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: "\u80CC\u4E0A\u7684\u79CD\u5B50\u91CC\u50A8\u5B58\u7740\u8425\u517B\uFF0C\n\u6240\u4EE5\u5373\u4F7F\u597D\u51E0\u5929\u4E0D\u5403\u4E1C\u897F\n\u4E5F\u53EF\u4EE5\u6D3B\u5F97\u597D\u597D\u7684\uFF01"
+      language:
+        name: zh-Hans
+        url: https://pokeapi.co/api/v2/language/12/
+      version:
+        name: lets-go-pikachu
+        url: https://pokeapi.co/api/v2/version/31/
+    - flavor_text: "\u306A\u3093\u306B\u3061\u3060\u3063\u3066\u3000\u306A\u306B\u3082\u3000\u305F\u3079\u306A\u304F\u3066\u3082\n\u3052\u3093\u304D\uFF01\u3000\u305B\u306A\u304B\u306E\u30BF\u30CD\u306B\u3000\u305F\u304F\u3055\u3093\n\u3048\u3044\u3088\u3046\u304C\u3000\u3042\u308B\u304B\u3089\u3000\u3078\u3044\u304D\u3060\uFF01"
+      language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: "\uBA70\uCE60 \uB3D9\uC548 \uC544\uBB34\uAC83\uB3C4 \uBA39\uC9C0
+        \uC54A\uC544\uB3C4\n\uAC74\uAC15\uD558\uB2E4! \uB4F1\uC5D0 \uC788\uB294 \uC528\uC557\uC5D0\uB294\n\uB9CE\uC740
+        \uC601\uC591\uBD84\uC774 \uC788\uC5B4\uC11C \uBB38\uC81C\uC5C6\uB2E4!"
+      language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: "\u80CC\u4E0A\u7684\u7A2E\u5B50\u88E1\u5B58\u8457\u5F88\u591A\u71DF\u990A\uFF0C\n\u6240\u4EE5\u5C31\u7B97\u597D\u5E7E\u5929\u4E0D\u5403\u6771\u897F\n\u4E5F\u80FD\u6D3B\u5F97\u597D\u597D\u7684\uFF01"
+      language:
+        name: zh-Hant
+        url: https://pokeapi.co/api/v2/language/4/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: "Il peut survivre plusieurs jours sans manger\ngr\xE2ce aux nutriments
+        contenus dans le bulbe\nsur son dos."
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: "Es kommt tagelang ohne Nahrung aus, da es\nin den Samen auf seinem
+        R\xFCcken N\xE4hrstoffe\nspeichert."
+      language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: 'Puede sobrevivir largo tiempo sin probar
+
+        bocado gracias
+        a los nutrientes que guarda
+
+        en el bulbo del lomo.'
+      language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: "Questo Pok\xE9mon pu\xF2 stare a lungo senza\nmangiare. Accumula
+        energia nel bulbo che\nha sulla schiena."
+      language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: 'It can go for days without eating a single morsel.
+
+        In
+        the bulb on its back, it stores energy.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: "\u4F55\u65E5\u3060\u3063\u3066\u3000\u306A\u306B\u3082\u3000\u98DF\u3079\u306A\u304F\u3066\u3082\n\u5143\u6C17\uFF01\u3000\u80CC\u4E2D\u306E\u30BF\u30CD\u306B\u3000\u305F\u304F\u3055\u3093\n\u6804\u990A\u304C\u3000\u3042\u308B\u304B\u3089\u3000\u5E73\u6C17\u3060\uFF01"
+      language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: "\u80CC\u4E0A\u7684\u79CD\u5B50\u91CC\u50A8\u5B58\u7740\u8425\u517B\uFF0C\n\u6240\u4EE5\u5373\u4F7F\u597D\u51E0\u5929\u4E0D\u5403\u4E1C\u897F\n\u4E5F\u53EF\u4EE5\u6D3B\u5F97\u597D\u597D\u7684\uFF01"
+      language:
+        name: zh-Hans
+        url: https://pokeapi.co/api/v2/language/12/
+      version:
+        name: lets-go-eevee
+        url: https://pokeapi.co/api/v2/version/32/
+    - flavor_text: "\u3046\u307E\u308C\u305F\u3068\u304D\u304B\u3089\u3000\u305B\u306A\u304B\u306B\n\u3057\u3087\u304F\u3076\u3064\u306E\u3000\u30BF\u30CD\u304C\u3000\u3042\u3063\u3066\n\u3059\u3053\u3057\u305A\u3064\u3000\u304A\u304A\u304D\u304F\u3000\u305D\u3060\u3064\u3002"
+      language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: "\uD0DC\uC5B4\uB0AC\uC744 \uB54C\uBD80\uD130 \uB4F1\uC5D0\n\uC2DD\uBB3C\uC758
+        \uC528\uC557\uC774 \uC788\uC73C\uBA70\n\uC870\uAE08\uC529 \uD06C\uAC8C \uC790\uB780\uB2E4."
+      language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: "\u5F9E\u51FA\u751F\u7684\u6642\u5019\u958B\u59CB\n\u80CC\u4E0A\u5C31\u6709\u4E00\u9846\u690D\u7269\u7A2E\u5B50\u3002\n\u9019\u9846\u7A2E\u5B50\u6703\u6F38\u6F38\u5730\u9577\u5927\u3002"
+      language:
+        name: zh-Hant
+        url: https://pokeapi.co/api/v2/language/4/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: 'Il y a une graine sur son dos depuis sa naissance.
+
+        Elle
+        grossit un peu chaque jour.'
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: "Dieses Pok\xE9mon tr\xE4gt von Geburt an einen\nSamen auf dem
+        R\xFCcken, der im Laufe der Zeit\nkeimt und w\xE4chst."
+      language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: "Este Pok\xE9mon nace con una semilla en el lomo,\nque brota con
+        el paso del tiempo."
+      language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: "Fin dalla nascita questo Pok\xE9mon ha sulla schiena\nun seme
+        che cresce lentamente."
+      language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: "There is a plant seed on its back right from the\nday this Pok\xE9mon
+        is born. The seed slowly\ngrows larger."
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: "\u751F\u307E\u308C\u305F\u3068\u304D\u304B\u3089\u3000\u80CC\u4E2D\u306B\n\u690D\u7269\u306E\u3000\u30BF\u30CD\u304C\u3000\u3042\u3063\u3066\n\u5C11\u3057\u305A\u3064\u3000\u5927\u304D\u304F\u3000\u80B2\u3064\u3002"
+      language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: "\u4ECE\u51FA\u751F\u7684\u65F6\u5019\u5F00\u59CB\uFF0C\n\u80CC\u4E0A\u5C31\u6709\u4E00\u9897\u690D\u7269\u79CD\u5B50\u3002\n\u8FD9\u9897\u79CD\u5B50\u4F1A\u6E10\u6E10\u5730\u957F\u5927\u3002"
+      language:
+        name: zh-Hans
+        url: https://pokeapi.co/api/v2/language/12/
+      version:
+        name: sword
+        url: https://pokeapi.co/api/v2/version/33/
+    - flavor_text: "\u3046\u307E\u308C\u3066\u3000\u3057\u3070\u3089\u304F\u306E\u3000\u3042\u3044\u3060\n\u305B\u306A\u304B\u306E\u3000\u30BF\u30CD\u306B\u3000\u3064\u307E\u3063\u305F\n\u3048\u3044\u3088\u3046\u3092\u3000\u3068\u3063\u3066\u3000\u305D\u3060\u3064\u3002"
+      language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    - flavor_text: "\uD0DC\uC5B4\uB098\uC11C \uC5BC\uB9C8 \uB3D9\uC548\n\uB4F1\uC758
+        \uC528\uC557\uC5D0 \uB2F4\uAE34\n\uC601\uC591\uC744 \uC12D\uCDE8\uD558\uBA70
+        \uC790\uB780\uB2E4."
+      language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    - flavor_text: "\u5728\u51FA\u751F\u5F8C\u7684\u4E00\u6BB5\u6642\u9593\u5167\uFF0C\n\u7260\u6703\u5438\u6536\u80CC\u4E0A\u7A2E\u5B50\u88E1\n\u5132\u5B58\u8457\u7684\u71DF\u990A\u6210\u9577\u3002"
+      language:
+        name: zh-Hant
+        url: https://pokeapi.co/api/v2/language/4/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    - flavor_text: "Quand il est jeune, il absorbe les nutriments\nconserv\xE9s dans
+        son dos pour grandir\net se d\xE9velopper."
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    - flavor_text: "Nach der Geburt nimmt es f\xFCr eine Weile\nN\xE4hrstoffe \xFCber
+        den Samen auf seinem\nR\xFCcken auf."
+      language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    - flavor_text: "Desde que nace, crece aliment\xE1ndose de los\nnutrientes que
+        contiene la semilla de su lomo."
+      language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    - flavor_text: 'Appena nato, trae nutrimento dalle sostanze
+
+        contenute
+        nel seme sul dorso.'
+      language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    - flavor_text: 'While it is young, it uses the nutrients that are
+
+        stored
+        in the seed on its back in order to grow.'
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    - flavor_text: "\u751F\u307E\u308C\u3066\u3000\u3057\u3070\u3089\u304F\u306E\u3000\u3042\u3044\u3060\n\u80CC\u4E2D\u306E\u3000\u30BF\u30CD\u306B\u3000\u3064\u307E\u3063\u305F\n\u6804\u990A\u3092\u3000\u3068\u3063\u3066\u3000\u80B2\u3064\u3002"
+      language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    - flavor_text: "\u5728\u51FA\u751F\u540E\u7684\u4E00\u6BB5\u65F6\u95F4\u5185\uFF0C\n\u5B83\u4F1A\u5438\u6536\u80CC\u4E0A\u79CD\u5B50\u91CC\n\u50A8\u5B58\u7740\u7684\u8425\u517B\u6210\u957F\u3002"
+      language:
+        name: zh-Hans
+        url: https://pokeapi.co/api/v2/language/12/
+      version:
+        name: shield
+        url: https://pokeapi.co/api/v2/version/34/
+    forms_switchable: 0
+    gender_rate: 1
+    genera:
+    - genus: "\u305F\u306D\u30DD\u30B1\u30E2\u30F3"
+      language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+    - genus: "\uC528\uC557\uD3EC\uCF13\uBAAC"
+      language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+    - genus: "\u7A2E\u5B50\u5BF6\u53EF\u5922"
+      language:
+        name: zh-Hant
+        url: https://pokeapi.co/api/v2/language/4/
+    - genus: "Pok\xE9mon Graine"
+      language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+    - genus: "Samen-Pok\xE9mon"
+      language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+    - genus: "Pok\xE9mon Semilla"
+      language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+    - genus: "Pok\xE9mon Seme"
+      language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+    - genus: "Seed Pok\xE9mon"
+      language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+    - genus: "\u305F\u306D\u30DD\u30B1\u30E2\u30F3"
+      language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+    - genus: "\u79CD\u5B50\u5B9D\u53EF\u68A6"
+      language:
+        name: zh-Hans
+        url: https://pokeapi.co/api/v2/language/12/
+    generation:
+      name: generation-i
+      url: https://pokeapi.co/api/v2/generation/1/
+    growth_rate:
+      name: medium-slow
+      url: https://pokeapi.co/api/v2/growth-rate/4/
+    habitat:
+      name: grassland
+      url: https://pokeapi.co/api/v2/pokemon-habitat/3/
+    has_gender_differences: 0
+    id: 1
+    is_baby: 0
+    is_legendary: 0
+    is_mythical: 0
+    name: bulbasaur
+    names:
+    - language:
+        name: ja-Hrkt
+        url: https://pokeapi.co/api/v2/language/1/
+      name: "\u30D5\u30B7\u30AE\u30C0\u30CD"
+    - language:
+        name: roomaji
+        url: https://pokeapi.co/api/v2/language/2/
+      name: Fushigidane
+    - language:
+        name: ko
+        url: https://pokeapi.co/api/v2/language/3/
+      name: "\uC774\uC0C1\uD574\uC528"
+    - language:
+        name: zh-Hant
+        url: https://pokeapi.co/api/v2/language/4/
+      name: "\u5999\u86D9\u7A2E\u5B50"
+    - language:
+        name: fr
+        url: https://pokeapi.co/api/v2/language/5/
+      name: Bulbizarre
+    - language:
+        name: de
+        url: https://pokeapi.co/api/v2/language/6/
+      name: Bisasam
+    - language:
+        name: es
+        url: https://pokeapi.co/api/v2/language/7/
+      name: Bulbasaur
+    - language:
+        name: it
+        url: https://pokeapi.co/api/v2/language/8/
+      name: Bulbasaur
+    - language:
+        name: en
+        url: https://pokeapi.co/api/v2/language/9/
+      name: Bulbasaur
+    - language:
+        name: ja
+        url: https://pokeapi.co/api/v2/language/11/
+      name: "\u30D5\u30B7\u30AE\u30C0\u30CD"
+    - language:
+        name: zh-Hans
+        url: https://pokeapi.co/api/v2/language/12/
+      name: "\u5999\u86D9\u79CD\u5B50"
+    order: 1
+    pal_park_encounters:
+    - area:
+        name: field
+        url: https://pokeapi.co/api/v2/pal-park-area/2/
+      base_score: 50
+      rate: 30
+    pokedex_numbers:
+    - entry_number: 1
+      pokedex:
+        name: national
+        url: https://pokeapi.co/api/v2/pokedex/1/
+    - entry_number: 1
+      pokedex:
+        name: kanto
+        url: https://pokeapi.co/api/v2/pokedex/2/
+    - entry_number: 226
+      pokedex:
+        name: original-johto
+        url: https://pokeapi.co/api/v2/pokedex/3/
+    - entry_number: 231
+      pokedex:
+        name: updated-johto
+        url: https://pokeapi.co/api/v2/pokedex/7/
+    - entry_number: 80
+      pokedex:
+        name: kalos-central
+        url: https://pokeapi.co/api/v2/pokedex/12/
+    - entry_number: 1
+      pokedex:
+        name: letsgo-kanto
+        url: https://pokeapi.co/api/v2/pokedex/26/
+    - entry_number: 68
+      pokedex:
+        name: isle-of-armor
+        url: https://pokeapi.co/api/v2/pokedex/28/
+    shape:
+      name: quadruped
+      url: https://pokeapi.co/api/v2/pokemon-shape/8/
+    varieties:
+    - is_default: 1
+      pokemon:
+        name: bulbasaur
+        url: https://pokeapi.co/api/v2/pokemon/1/
 --- !u!1 &1770408875
 GameObject:
   m_ObjectHideFlags: 0
