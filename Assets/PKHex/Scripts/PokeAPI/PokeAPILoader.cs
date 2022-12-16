@@ -1,7 +1,10 @@
 using PKHeX.Core;
+using SFB;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
@@ -41,16 +44,20 @@ namespace PKHexForUnity.PokeAPI
         brilliantdiamond,
         shiningpearl,
         legendsarceus,
-        scarletviolet
+        scarlet,
+        violet
     }
 
     public class PokeAPILoader : MonoBehaviour
     {
         public PokemonVersions Version = PokemonVersions.red;
 
-        [SerializeField] protected PokedexAPI m_pokedex;
+        [SerializeField] PokeAPIPokemonData m_loadedMon;
+        protected PokedexAPI m_pokedex;
+        protected bool m_parsingDexFromAPI = false;
+        protected Coroutine m_dexParseCoroutine;
 
-
+        public virtual bool IsParsingDexFromAPI => m_parsingDexFromAPI;
 
         public virtual string GetGameID(PokemonVersions generation)
         {
@@ -74,12 +81,69 @@ namespace PKHexForUnity.PokeAPI
                     return "shining-pearl";
                 case PokemonVersions.legendsarceus:
                     return "legends-arceus";
-                case PokemonVersions.scarletviolet:
-                    return "scarlet-violet";
             }
 
             return generation.ToString();
         }
+
+        public virtual PokemonGeneration GetGameGenerationFromVersion(PokemonVersions version)
+        {
+            switch (version)
+            {
+                case PokemonVersions.red:
+                case PokemonVersions.blue:
+                case PokemonVersions.yellow:
+                    return PokemonGeneration.Kanto;
+                case PokemonVersions.gold:
+                case PokemonVersions.silver:
+                case PokemonVersions.crystal:
+                    return PokemonGeneration.Johto;
+                case PokemonVersions.ruby:
+                case PokemonVersions.sapphire:
+                case PokemonVersions.emerald:
+                    return PokemonGeneration.Hoenn;
+                case PokemonVersions.diamond:
+                case PokemonVersions.pearl:
+                    return PokemonGeneration.Sinnoh;
+                case PokemonVersions.platinum:
+                    return PokemonGeneration.SinnohPt;
+                case PokemonVersions.heartgold:
+                case PokemonVersions.soulsilver:
+                    return PokemonGeneration.HGSS;
+                case PokemonVersions.black:
+                case PokemonVersions.white:
+                    return PokemonGeneration.Tesselia;
+                case PokemonVersions.black2:
+                case PokemonVersions.white2:
+                    return PokemonGeneration.TesseliaBW2;
+                case PokemonVersions.x:
+                case PokemonVersions.y:
+                    return PokemonGeneration.Kalos;
+                case PokemonVersions.omegaruby:
+                case PokemonVersions.alphasapphire:
+                    return PokemonGeneration.ORAS;
+                case PokemonVersions.sun:
+                case PokemonVersions.moon:
+                case PokemonVersions.ultrasun:
+                case PokemonVersions.ultramoon:
+                    return PokemonGeneration.Alola;
+                case PokemonVersions.sword:
+                case PokemonVersions.shield:
+                    return PokemonGeneration.Galar;
+                case PokemonVersions.brilliantdiamond:
+                case PokemonVersions.shiningpearl:
+                    return PokemonGeneration.BDSP;
+                case PokemonVersions.legendsarceus:
+                    return PokemonGeneration.LegendsArceus;
+                case PokemonVersions.scarlet:
+                case PokemonVersions.violet:
+                    return PokemonGeneration.ScarletViolet;
+            }
+
+            return LastGenerationSupported;
+        }
+
+        public PokemonGeneration LastGenerationSupported => PokemonGeneration.LegendsArceus;
 
         public virtual List<string> GetGameID(PokemonGeneration generation)
         {
@@ -126,6 +190,8 @@ namespace PKHexForUnity.PokeAPI
             }
         }
 
+        public PokemonVersions LastGameSupported() => PokemonVersions.legendsarceus;
+
         public virtual void GetDexDescription(int _speciesNumber, string _generationID, LanguageID _language = LanguageID.English)
         {
             StartCoroutine(GetPokemonTextFromPokeAPI(_speciesNumber, (string _data) =>
@@ -171,16 +237,77 @@ namespace PKHexForUnity.PokeAPI
             }));
         }
 
+        public virtual void LoadPokemonFromAPIJSON(int target)
+        {
+            if (m_pokedex == null || m_pokedex.Pokemon.Count == 0)
+            {
+                LoadDexFromAPIJSON();
+            }
+
+            if (m_pokedex == null || m_pokedex.Pokemon.Count == 0)
+                return;
+
+            target = Mathf.Clamp(target, 0, m_pokedex.Pokemon.Count - 1);
+
+            m_loadedMon = m_pokedex.Pokemon[target];
+        }
+
+        public virtual void LoadDexFromAPIJSON()
+        {
+            var paths = StandaloneFileBrowser.OpenFilePanel("Selected the JSON File", Application.dataPath, new ExtensionFilter[] { new ExtensionFilter() { Name = "JSON File", Extensions = new string[] { "json" } } }, false);
+            if (paths != null && paths.Count > 0 && !string.IsNullOrEmpty(paths[0].Name) && System.IO.File.Exists(paths[0].Name))
+            {
+                m_pokedex = JsonUtility.FromJson<PokedexAPI>(System.IO.File.ReadAllText(paths[0].Name));
+              
+            }
+        }
+
         public virtual void FillDexFromAPI()
         {
-            m_pokedex = new PokedexAPI();
+            m_pokedex = new PokedexAPI() { Version = Version.ToString(), Pokemon = new List<PokeAPIPokemonData>() };
+            m_parsingDexFromAPI = true;
+            m_dexParseCoroutine = StartCoroutine(FillDexFromAPICoroutine(m_pokedex));
+        }
 
-            StartCoroutine(FillDexFromAPICoroutine(m_pokedex));
+        public virtual void CancelFillDexFromAPI()
+        {
+            m_parsingDexFromAPI = false;
+            StopCoroutine(m_dexParseCoroutine);
+            m_dexParseCoroutine = null;
+
+#if UNITY_EDITOR
+            if (m_pokedex.Pokemon.Count > 0 && UnityEditor.EditorUtility.DisplayDialog("Save Dex from API?", "Do you want to svave the parsed PokeDex?", "Yes", "No"))
+            {
+                m_loadedMon = m_pokedex.Pokemon[0];
+                SaveDexToJSON(m_pokedex);
+            }
+
+            m_pokedex.Pokemon.Clear();
+#endif
+        }
+
+        public virtual PokemonVersions GetSelectedGeneration()
+        {
+            int numberSelected = (int)Version;
+            int max = (int)LastGameSupported();
+
+            if (numberSelected < max)
+            {
+                return Version;
+            }
+
+            return LastGameSupported();
         }
 
         public virtual IEnumerator FillDexFromAPICoroutine(PokedexAPI dex)
         {
-            int length = PKHexUtils.GetDexCount(PokemonGeneration.LegendsArceus);
+            PokemonGeneration generation = GetGameGenerationFromVersion(GetSelectedGeneration());
+            int length = PKHexUtils.GetDexCount(generation);
+            Debug.Log("Parsing dex from generation: " + generation +". Count: "+length);
+
+            dex.PokemonGeneration = generation.ToString();
+            dex.TotalPokemon = length;
+
             for (int i = 1; i <= length; i++)
             {
                 yield return GetPokemonTextFromPokeAPI(i, (string _data) =>
@@ -188,7 +315,6 @@ namespace PKHexForUnity.PokeAPI
                     PokeAPIPokemonData pkmn = JsonUtility.FromJson<PokeAPIPokemonData>(_data);
                     AddToDex(dex, pkmn, i == length);
                 });
-
             }
         }
 
@@ -199,12 +325,31 @@ namespace PKHexForUnity.PokeAPI
 
             if (_isLast)
             {
-                System.IO.File.WriteAllText(Application.dataPath + "/dex.json", JsonUtility.ToJson(dex));
-#if UNITY_EDITOR
-                UnityEditor.AssetDatabase.Refresh();
-#endif
-                Debug.Log("Saved Dex");
+                m_loadedMon = m_pokedex.Pokemon[0];
+                m_parsingDexFromAPI = false;
+                SaveDexToJSON(dex);
             }
+        }
+
+        public virtual void SaveDexToJSON(PokedexAPI dex)
+        {
+            string path = Application.dataPath + "/Parsed Dex From API/";
+
+            if (!System.IO.Directory.Exists(path))
+                System.IO.Directory.CreateDirectory(path);
+
+            string file = dex.PokemonGeneration+"_"+dex.Version + "_dex.json";
+
+            path += "/" + file;
+
+#if UNITY_EDITOR
+            path = AssetDatabase.GenerateUniqueAssetPath("Assets/Parsed Dex From API/" + file);
+#endif
+            System.IO.File.WriteAllText(path, JsonUtility.ToJson(dex));
+#if UNITY_EDITOR
+            UnityEditor.AssetDatabase.Refresh();
+#endif
+            Debug.Log("Saved Dex at " + path);
         }
 
         public IEnumerator GetPokemonTextFromPokeAPI(int _speciesNumber, UnityAction<string> onLoad = null)
@@ -212,7 +357,7 @@ namespace PKHexForUnity.PokeAPI
             UnityWebRequest www = UnityWebRequest.Get("https://pokeapi.co/api/v2/pokemon-species/" + _speciesNumber);
             yield return www.SendWebRequest();
 
-            if (!string.IsNullOrEmpty(www.error))
+            if (!string.IsNullOrEmpty(www.error) || www.downloadHandler.text.Contains("Not Found"))
             {
                 Debug.LogError(www.error);
                 onLoad?.Invoke("No Data");

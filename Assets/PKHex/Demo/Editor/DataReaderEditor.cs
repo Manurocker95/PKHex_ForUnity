@@ -74,17 +74,32 @@ namespace PKHexForUnity
             
             if (myTarget.PokeAPILoader)
             {
-                if (GUILayout.Button("Show Pokemon From API"))
-                    myTarget.PokeAPILoader.GetPokemonFromAPI(myTarget.PokemonIndex, false);
+                if (!myTarget.PokeAPILoader.IsParsingDexFromAPI)
+                {
+                    if (GUILayout.Button("Show Pokemon From API"))
+                        myTarget.PokeAPILoader.GetPokemonFromAPI(myTarget.PokemonIndex, false);
 
-                if (GUILayout.Button("Show Pokemon Dex Entry From API"))
-                    myTarget.PokeAPILoader.GetDexDescription(myTarget.PokemonIndex, myTarget.PokeAPILoader.GetGameID(myTarget.PokeAPILoader.Version), myTarget.Language);
+                    if (GUILayout.Button("Show Pokemon Dex Entry From API"))
+                        myTarget.PokeAPILoader.GetDexDescription(myTarget.PokemonIndex, myTarget.PokeAPILoader.GetGameID(myTarget.PokeAPILoader.Version), myTarget.Language);
 
-                if (GUILayout.Button("Save Pokemon From API"))
-                    myTarget.PokeAPILoader.GetPokemonFromAPI(myTarget.PokemonIndex, true);
+                    if (GUILayout.Button("Save Pokemon From API"))
+                        myTarget.PokeAPILoader.GetPokemonFromAPI(myTarget.PokemonIndex, true);
 
-                if (GUILayout.Button("Save Full Dex List From API"))
-                    myTarget.PokeAPILoader.FillDexFromAPI();
+                    if (GUILayout.Button("Save Full Dex List From API"))
+                        myTarget.PokeAPILoader.FillDexFromAPI();
+
+                    if (GUILayout.Button("Load Full Dex List From API JSON"))
+                        myTarget.PokeAPILoader.LoadDexFromAPIJSON();
+
+                    if (GUILayout.Button("Load Pokemon From API JSON"))
+                        myTarget.PokeAPILoader.LoadPokemonFromAPIJSON(myTarget.PokemonIndex-1);
+                }
+                else
+                {
+                    if (GUILayout.Button("Cancel parse Dex List From API"))
+                        myTarget.PokeAPILoader.CancelFillDexFromAPI();
+                }
+
             }
             else
             {

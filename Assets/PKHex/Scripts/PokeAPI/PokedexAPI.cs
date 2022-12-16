@@ -8,6 +8,9 @@ namespace PKHexForUnity.PokeAPI
     [System.Serializable]
     public class PokedexAPI
     {
+        public string Version; 
+        public string PokemonGeneration; 
+        public int TotalPokemon; 
         public List<PokeAPIPokemonData> Pokemon = new List<PokeAPIPokemonData>();
     }
 }
