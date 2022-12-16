@@ -1046,7 +1046,7 @@ namespace PKHexForUnity
 				case PokemonGeneration.LegendsArceus:
 					return PKHexGen8LASavLoader.LoadSaveFileFromPath(sav);
 				case PokemonGeneration.ScarletViolet:
-					return PKHexGen8LASavLoader.LoadSaveFileFromPath(sav);
+					return PKHexGen9SCVISavLoader.LoadSaveFileFromPath(sav);
 				case PokemonGeneration.Stadium:
 					return PKHexGen1StadiumSavLoader.LoadSaveFileFromPath(sav);
 				case PokemonGeneration.Stadium2:

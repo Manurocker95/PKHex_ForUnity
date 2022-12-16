@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
+#if USE_NEWTONSOFT_JSON
 using Newtonsoft.Json;
+#endif
 using PKHeX.Core;
+using UnityEngine;
 
 namespace PKHexForUnity
 {
@@ -40,7 +42,11 @@ namespace PKHexForUnity
             try
             {
                 var lines = File.ReadAllText(configPath);
+#if USE_NEWTONSOFT_JSON
                 return JsonConvert.DeserializeObject<PKHeXSettings>(lines) ?? new PKHeXSettings();
+#else
+                return JsonUtility.FromJson<PKHeXSettings>(lines) ?? new PKHeXSettings();
+#endif
             }
             catch (Exception x)
             {
@@ -53,6 +59,7 @@ namespace PKHexForUnity
         {
             try
             {
+#if USE_NEWTONSOFT_JSON
                 var settings = new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented,
@@ -60,6 +67,9 @@ namespace PKHexForUnity
                     NullValueHandling = NullValueHandling.Ignore,
                 };
                 var text = JsonConvert.SerializeObject(cfg, settings);
+#else
+                var text = JsonUtility.ToJson(cfg);
+#endif
                 File.WriteAllText(configPath, text);
             }
             catch (Exception x)
@@ -76,7 +86,7 @@ namespace PKHexForUnity
             }
             catch (Exception)
             {
-                Debug.WriteLine(x); // ???
+                Debug.Log(x); // ???
             }
         }
     }
