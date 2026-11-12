@@ -18,6 +18,9 @@ namespace PKHexForUnity
         private string m_outputRoot = PKHexDataPaths.DEFAULT_EXPORT_ROOT;
         private bool m_exportText = true;
         private bool m_exportAssets = true;
+        private bool m_exportCsv;
+        private bool m_csvHeader = true;
+        private PKHexTextFormat m_textFormat = PKHexTextFormat.NamesOnly;
         private bool[] m_generations;
         private bool[] m_generationFoldouts;
         private Dictionary<string, bool> m_games = new Dictionary<string, bool>();
@@ -42,6 +45,9 @@ namespace PKHexForUnity
             m_outputRoot = EditorPrefs.GetString(PREFS_PREFIX + "OutputRoot", PKHexDataPaths.DEFAULT_EXPORT_ROOT);
             m_exportText = EditorPrefs.GetBool(PREFS_PREFIX + "ExportText", true);
             m_exportAssets = EditorPrefs.GetBool(PREFS_PREFIX + "ExportAssets", true);
+            m_exportCsv = EditorPrefs.GetBool(PREFS_PREFIX + "ExportCsv", false);
+            m_csvHeader = EditorPrefs.GetBool(PREFS_PREFIX + "CsvHeader", true);
+            m_textFormat = (PKHexTextFormat)EditorPrefs.GetInt(PREFS_PREFIX + "TextFormat", (int)PKHexTextFormat.NamesOnly);
             m_singleGeneration = EditorPrefs.GetInt(PREFS_PREFIX + "SingleGeneration", PKHexDataPaths.MAX_GENERATION);
             for (int g = PKHexDataPaths.MIN_GENERATION; g <= PKHexDataPaths.MAX_GENERATION; g++)
             {
@@ -63,6 +69,9 @@ namespace PKHexForUnity
             EditorPrefs.SetString(PREFS_PREFIX + "OutputRoot", m_outputRoot);
             EditorPrefs.SetBool(PREFS_PREFIX + "ExportText", m_exportText);
             EditorPrefs.SetBool(PREFS_PREFIX + "ExportAssets", m_exportAssets);
+            EditorPrefs.SetBool(PREFS_PREFIX + "ExportCsv", m_exportCsv);
+            EditorPrefs.SetBool(PREFS_PREFIX + "CsvHeader", m_csvHeader);
+            EditorPrefs.SetInt(PREFS_PREFIX + "TextFormat", (int)m_textFormat);
             EditorPrefs.SetInt(PREFS_PREFIX + "SingleGeneration", m_singleGeneration);
             for (int g = PKHexDataPaths.MIN_GENERATION; g <= PKHexDataPaths.MAX_GENERATION; g++)
             {
@@ -92,8 +101,21 @@ namespace PKHexForUnity
             }
             EditorGUILayout.EndHorizontal();
             m_exportText = EditorGUILayout.Toggle("Export .txt files", m_exportText);
+            GUI.enabled = m_exportText;
+            EditorGUI.indentLevel++;
+            m_textFormat = (PKHexTextFormat)EditorGUILayout.EnumPopup("List format", m_textFormat);
+            EditorGUI.indentLevel--;
+            GUI.enabled = true;
             m_exportAssets = EditorGUILayout.Toggle("Export ScriptableObjects", m_exportAssets);
-            EditorGUILayout.HelpBox("Files go to <folder>/Data/GenN/<Language>/ (texts, strings) and <folder>/Data/GenN/Games/ (Pokémon data).", MessageType.None);
+            m_exportCsv = EditorGUILayout.Toggle("Export CSV (all languages)", m_exportCsv);
+            GUI.enabled = m_exportCsv;
+            EditorGUI.indentLevel++;
+            m_csvHeader = EditorGUILayout.Toggle("Header row", m_csvHeader);
+            EditorGUI.indentLevel--;
+            GUI.enabled = true;
+            EditorGUILayout.HelpBox("Files go to <folder>/Data/GenN/<Language>/ (texts, strings), <folder>/Data/GenN/Games/ (Pokémon data) "
+                + "and <folder>/Data/GenN/CSV/ (one CSV per category: ID,English,<selected languages>).\n"
+                + "List format: NamesOnly = one name per line (line N from 0 = ID N); CommaSeparated = \"ID,Name\".", MessageType.None);
 
             EditorGUILayout.Space();
             DrawGenerations();
@@ -176,7 +198,7 @@ namespace PKHexForUnity
         protected virtual void DrawExportButtons()
         {
             EditorGUILayout.LabelField("Export", EditorStyles.boldLabel);
-            GUI.enabled = m_exportText || m_exportAssets;
+            GUI.enabled = m_exportText || m_exportAssets || m_exportCsv;
 
             if (GUILayout.Button("Export selection (checked generations, games and languages)"))
             {
@@ -197,6 +219,17 @@ namespace PKHexForUnity
                 RunExport(options);
             }
             EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Export CSV only of Gen " + m_singleGeneration + " (selected languages, English first)"))
+            {
+                PKHexExportOptions options = CreateOptions();
+                options.ExportText = false;
+                options.ExportAssets = false;
+                options.ExportCsv = true;
+                options.Generations = new int[] { m_singleGeneration };
+                options.LanguageCodes = GetSelectedLanguages();
+                RunExport(options);
+            }
 
             if (GUILayout.Button("Export all generations (selected languages)"))
             {
@@ -258,6 +291,9 @@ namespace PKHexForUnity
             options.OutputRoot = m_outputRoot;
             options.ExportText = m_exportText;
             options.ExportAssets = m_exportAssets;
+            options.ExportCsv = m_exportCsv;
+            options.CsvHeader = m_csvHeader;
+            options.TextFormat = m_textFormat;
             return options;
         }
 

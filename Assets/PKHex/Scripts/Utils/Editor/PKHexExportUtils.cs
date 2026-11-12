@@ -34,6 +34,11 @@ namespace PKHexForUnity
         public string[] GameKeys;
         public bool ExportText = true;
         public bool ExportAssets = true;
+
+        /// <summary> One CSV per category and generation, one column per language (English first). </summary>
+        public bool ExportCsv;
+        public bool CsvHeader = true;
+        public PKHexTextFormat TextFormat = PKHexTextFormat.NamesOnly;
         public string OutputRoot = PKHexDataPaths.DEFAULT_EXPORT_ROOT;
     }
 
@@ -43,6 +48,7 @@ namespace PKHexForUnity
         public int GamesExported;
         public int LanguagesExported;
         public int TextFilesWritten;
+        public int CsvFilesWritten;
         public int AssetsWritten;
         public int SpeciesExported;
         public bool Cancelled;
@@ -52,7 +58,7 @@ namespace PKHexForUnity
         {
             return "[PKHex] Export " + (Cancelled ? "CANCELLED" : "finished") + ": " + GamesExported + " game(s), "
                 + LanguagesExported + " generation-language set(s), " + SpeciesExported + " species-form(s), "
-                + AssetsWritten + " asset(s), " + TextFilesWritten + " text file(s), " + Errors.Count + " error(s).";
+                + AssetsWritten + " asset(s), " + TextFilesWritten + " text file(s), " + CsvFilesWritten + " CSV file(s), " + Errors.Count + " error(s).";
         }
     }
 
@@ -109,6 +115,7 @@ namespace PKHexForUnity
 
         // Names in the language-independent game data are not used; English is the cheapest valid language to resolve.
         private const string DATA_LANGUAGE = "en";
+        private const string ENGLISH_CODE = "en";
 
         /// <summary> Exports every generation, game and language. </summary>
         public static PKHexExportReport ExportAll(bool _text, bool _assets, string _outputRoot)
@@ -139,6 +146,23 @@ namespace PKHexForUnity
             options.LanguageCodes = new string[] { _languageCode };
             options.ExportText = _text;
             options.ExportAssets = _assets;
+            options.OutputRoot = _outputRoot;
+            return Export(options);
+        }
+
+        /// <summary>
+        /// Exports only the CSV files of one generation (Data/GenN/CSV/*.csv): one row per ID, one column per language,
+        /// English always first. Null <paramref name="_languageCodes"/> = all languages.
+        /// </summary>
+        public static PKHexExportReport ExportGenerationCsv(int _generation, string[] _languageCodes, bool _header, string _outputRoot)
+        {
+            PKHexExportOptions options = new PKHexExportOptions();
+            options.Generations = new int[] { _generation };
+            options.LanguageCodes = _languageCodes;
+            options.ExportText = false;
+            options.ExportAssets = false;
+            options.ExportCsv = true;
+            options.CsvHeader = _header;
             options.OutputRoot = _outputRoot;
             return Export(options);
         }
@@ -208,6 +232,8 @@ namespace PKHexForUnity
                         }
                     }
 
+                    // String tables are kept in memory until the CSV export (which needs every language) is done.
+                    List<PKHexStringTable> tables = new List<PKHexStringTable>();
                     for (int l = 0; l < languages.Length && !report.Cancelled && games.Count != 0; l++)
                     {
                         string code = languages[l];
@@ -218,24 +244,60 @@ namespace PKHexForUnity
                         try
                         {
                             PKHexStringTable strings = BuildStringTable(generation, code, exportedGroups, games);
-                            string folder = root + "/" + PKHexDataPaths.GetLanguagePath(generation, PKHexDataPaths.GetLanguageFolder(code));
+                            tables.Add(strings);
                             if (_options.ExportText)
                             {
-                                WriteTextFiles(folder, strings, games, report);
-                            }
-                            if (_options.ExportAssets)
-                            {
-                                SaveAsset(strings, folder, PKHexDataPaths.STRINGS_ASSET_NAME, report);
-                            }
-                            else
-                            {
-                                Object.DestroyImmediate(strings);
+                                string folder = root + "/" + PKHexDataPaths.GetLanguagePath(generation, PKHexDataPaths.GetLanguageFolder(code));
+                                WriteTextFiles(folder, strings, games, _options.TextFormat, report);
                             }
                             report.LanguagesExported++;
                         }
                         catch (Exception ex)
                         {
                             AddError(report, "Gen " + generation + " language " + code + " failed: " + ex);
+                        }
+                    }
+
+                    if (_options.ExportCsv && !report.Cancelled && games.Count != 0)
+                    {
+                        PKHexStringTable extraEnglish = null;
+                        try
+                        {
+                            List<PKHexStringTable> csvTables = new List<PKHexStringTable>(tables);
+                            if (FindTable(csvTables, ENGLISH_CODE) == null)
+                            {
+                                // English is always the first CSV column, even when it was not selected.
+                                extraEnglish = BuildStringTable(generation, ENGLISH_CODE, exportedGroups, games);
+                                csvTables.Add(extraEnglish);
+                            }
+                            string csvFolder = root + "/" + PKHexDataPaths.GetCsvPath(generation);
+                            WriteCsvFiles(csvFolder, OrderEnglishFirst(csvTables), games, _options.CsvHeader, report);
+                        }
+                        catch (Exception ex)
+                        {
+                            AddError(report, "Gen " + generation + " CSV export failed: " + ex);
+                        }
+                        if (extraEnglish != null)
+                        {
+                            Object.DestroyImmediate(extraEnglish);
+                        }
+                    }
+
+                    for (int t = 0; t < tables.Count; t++)
+                    {
+                        if (!_options.ExportAssets)
+                        {
+                            Object.DestroyImmediate(tables[t]);
+                            continue;
+                        }
+                        try
+                        {
+                            string folder = root + "/" + PKHexDataPaths.GetLanguagePath(generation, tables[t].LanguageFolder);
+                            SaveAsset(tables[t], folder, PKHexDataPaths.STRINGS_ASSET_NAME, report);
+                        }
+                        catch (Exception ex)
+                        {
+                            AddError(report, "Gen " + generation + " strings asset " + tables[t].LanguageCode + " failed to save: " + ex);
                         }
                     }
 
@@ -381,24 +443,24 @@ namespace PKHexForUnity
         }
 
         /// <summary> Writes all .txt files of one generation-language folder. </summary>
-        public static void WriteTextFiles(string _folder, PKHexStringTable _strings, List<PKHexGameData> _games, PKHexExportReport _report)
+        public static void WriteTextFiles(string _folder, PKHexStringTable _strings, List<PKHexGameData> _games, PKHexTextFormat _format, PKHexExportReport _report)
         {
             EnsureFolder(_folder);
-            WriteText(_folder, SPECIES_FILE, PKHexDataText.FormatIdList(_strings.SpeciesNames), _report);
-            WriteText(_folder, MOVES_FILE, PKHexDataText.FormatIdList(_strings.MoveNames), _report);
-            WriteText(_folder, ABILITIES_FILE, PKHexDataText.FormatIdList(_strings.AbilityNames), _report);
-            WriteText(_folder, NATURES_FILE, PKHexDataText.FormatIdList(_strings.NatureNames), _report);
-            WriteText(_folder, TYPES_FILE, PKHexDataText.FormatIdList(_strings.TypeNames), _report);
-            WriteText(_folder, BALLS_FILE, PKHexDataText.FormatIdList(_strings.BallNames), _report);
+            WriteText(_folder, SPECIES_FILE, PKHexDataText.FormatIdList(_strings.SpeciesNames, _format), _report);
+            WriteText(_folder, MOVES_FILE, PKHexDataText.FormatIdList(_strings.MoveNames, _format), _report);
+            WriteText(_folder, ABILITIES_FILE, PKHexDataText.FormatIdList(_strings.AbilityNames, _format), _report);
+            WriteText(_folder, NATURES_FILE, PKHexDataText.FormatIdList(_strings.NatureNames, _format), _report);
+            WriteText(_folder, TYPES_FILE, PKHexDataText.FormatIdList(_strings.TypeNames, _format), _report);
+            WriteText(_folder, BALLS_FILE, PKHexDataText.FormatIdList(_strings.BallNames, _format), _report);
             for (int i = 0; i < _games.Count; i++)
             {
                 PKHexGameData game = _games[i];
                 PKHexGameStrings gameStrings = _strings.GetGameStrings(game.GameKey);
                 try
                 {
-                    WriteText(_folder, ITEMS_FILE_PREFIX + game.GameKey, PKHexDataText.FormatIdList(gameStrings.Items), _report);
-                    WriteText(_folder, FORMS_FILE_PREFIX + game.GameKey, PKHexDataText.FormatFormList(gameStrings, _strings), _report);
-                    WriteText(_folder, MOVE_DATA_FILE_PREFIX + game.GameKey, PKHexDataText.FormatMoveList(game, _strings), _report);
+                    WriteText(_folder, ITEMS_FILE_PREFIX + game.GameKey, PKHexDataText.FormatIdList(gameStrings.Items, _format), _report);
+                    WriteText(_folder, FORMS_FILE_PREFIX + game.GameKey, PKHexDataText.FormatFormList(gameStrings, _strings, _format), _report);
+                    WriteText(_folder, MOVE_DATA_FILE_PREFIX + game.GameKey, PKHexDataText.FormatMoveList(game, _strings, _format), _report);
                     WriteText(_folder, POKEDEX_FILE_PREFIX + game.GameKey, PKHexDataText.FormatPokedex(game, _strings), _report);
                 }
                 catch (Exception ex)
@@ -406,6 +468,90 @@ namespace PKHexForUnity
                     AddError(_report, "Text files of " + game.GameKey + " in " + _folder + " failed: " + ex);
                 }
             }
+        }
+
+        /// <summary>
+        /// Writes one CSV per category of a generation into <paramref name="_folder"/>: "ID,English,Spanish,..." per row.
+        /// <paramref name="_tables"/> gives the language columns in order (see <see cref="OrderEnglishFirst"/>).
+        /// </summary>
+        public static void WriteCsvFiles(string _folder, List<PKHexStringTable> _tables, List<PKHexGameData> _games, bool _header, PKHexExportReport _report)
+        {
+            EnsureFolder(_folder);
+            PKHexStringTable[] tables = _tables.ToArray();
+            string[] languages = new string[tables.Length];
+            string[][] species = new string[tables.Length][];
+            string[][] moves = new string[tables.Length][];
+            string[][] abilities = new string[tables.Length][];
+            string[][] natures = new string[tables.Length][];
+            string[][] types = new string[tables.Length][];
+            string[][] balls = new string[tables.Length][];
+            for (int i = 0; i < tables.Length; i++)
+            {
+                languages[i] = tables[i].LanguageFolder;
+                species[i] = tables[i].SpeciesNames;
+                moves[i] = tables[i].MoveNames;
+                abilities[i] = tables[i].AbilityNames;
+                natures[i] = tables[i].NatureNames;
+                types[i] = tables[i].TypeNames;
+                balls[i] = tables[i].BallNames;
+            }
+            WriteCsv(_folder, SPECIES_FILE, PKHexDataText.FormatCsvIdTable(languages, species, _header), _report);
+            WriteCsv(_folder, MOVES_FILE, PKHexDataText.FormatCsvIdTable(languages, moves, _header), _report);
+            WriteCsv(_folder, ABILITIES_FILE, PKHexDataText.FormatCsvIdTable(languages, abilities, _header), _report);
+            WriteCsv(_folder, NATURES_FILE, PKHexDataText.FormatCsvIdTable(languages, natures, _header), _report);
+            WriteCsv(_folder, TYPES_FILE, PKHexDataText.FormatCsvIdTable(languages, types, _header), _report);
+            WriteCsv(_folder, BALLS_FILE, PKHexDataText.FormatCsvIdTable(languages, balls, _header), _report);
+
+            for (int g = 0; g < _games.Count; g++)
+            {
+                string key = _games[g].GameKey;
+                try
+                {
+                    string[][] items = new string[tables.Length][];
+                    for (int i = 0; i < tables.Length; i++)
+                    {
+                        PKHexGameStrings gameStrings = tables[i].GetGameStrings(key);
+                        items[i] = gameStrings != null ? gameStrings.Items : new string[0];
+                    }
+                    WriteCsv(_folder, ITEMS_FILE_PREFIX + key, PKHexDataText.FormatCsvIdTable(languages, items, _header), _report);
+                    WriteCsv(_folder, FORMS_FILE_PREFIX + key, PKHexDataText.FormatCsvFormTable(key, tables, _header), _report);
+                }
+                catch (Exception ex)
+                {
+                    AddError(_report, "CSV files of " + key + " in " + _folder + " failed: " + ex);
+                }
+            }
+        }
+
+        /// <summary> Returns the tables with English first; the others keep their order. </summary>
+        public static List<PKHexStringTable> OrderEnglishFirst(List<PKHexStringTable> _tables)
+        {
+            List<PKHexStringTable> result = new List<PKHexStringTable>(_tables.Count);
+            PKHexStringTable english = FindTable(_tables, ENGLISH_CODE);
+            if (english != null)
+            {
+                result.Add(english);
+            }
+            for (int i = 0; i < _tables.Count; i++)
+            {
+                if (_tables[i] != english)
+                {
+                    result.Add(_tables[i]);
+                }
+            }
+            return result;
+        }
+
+        private static PKHexStringTable FindTable(List<PKHexStringTable> _tables, string _languageCode)
+        {
+            for (int i = 0; i < _tables.Count; i++)
+            {
+                if (_tables[i].LanguageCode == _languageCode)
+                {
+                    return _tables[i];
+                }
+            }
+            return null;
         }
 
         /// <summary> Rebuilds Data/PKHexDataIndex.asset from the exported files found under <paramref name="_outputRoot"/>. </summary>
@@ -598,6 +744,15 @@ namespace PKHexForUnity
             if (_report != null)
             {
                 _report.TextFilesWritten++;
+            }
+        }
+
+        private static void WriteCsv(string _folder, string _fileName, string _content, PKHexExportReport _report)
+        {
+            File.WriteAllText(_folder + "/" + _fileName + PKHexDataPaths.CSV_EXTENSION, _content, new UTF8Encoding(false));
+            if (_report != null)
+            {
+                _report.CsvFilesWritten++;
             }
         }
 

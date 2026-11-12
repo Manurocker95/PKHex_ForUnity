@@ -62,6 +62,17 @@ namespace PKHexForUnity
             return LoadAsync<TextAsset>(PKHexDataPaths.GetTextResourcePath(_generation, _languageFolder, _fileName), _onLoaded);
         }
 
+        /// <param name="_fileName">CSV file name without extension, e.g. "Types" or "Items_SV".</param>
+        public static TextAsset LoadCsv(int _generation, string _fileName)
+        {
+            return Load<TextAsset>(PKHexDataPaths.GetCsvResourcePath(_generation, _fileName));
+        }
+
+        public static IEnumerator LoadCsvAsync(int _generation, string _fileName, Action<TextAsset> _onLoaded)
+        {
+            return LoadAsync<TextAsset>(PKHexDataPaths.GetCsvResourcePath(_generation, _fileName), _onLoaded);
+        }
+
         /// <summary> Removes one asset from the cache and unloads it from memory. </summary>
         public static void Unload(Object _asset)
         {

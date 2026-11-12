@@ -22,6 +22,8 @@ namespace PKHexForUnity
         public const string STRINGS_ASSET_NAME = "PKHexStrings";
         public const string INDEX_ASSET_NAME = "PKHexDataIndex";
         public const string TEXT_EXTENSION = ".txt";
+        public const string CSV_FOLDER = "CSV";
+        public const string CSV_EXTENSION = ".csv";
         public const string ASSET_EXTENSION = ".asset";
 
         public const int MIN_GENERATION = 1;
@@ -65,6 +67,18 @@ namespace PKHexForUnity
         public static string GetTextResourcePath(int _generation, string _languageFolder, string _fileName)
         {
             return GetLanguagePath(_generation, _languageFolder) + "/" + _fileName;
+        }
+
+        /// <summary> "Data/Gen9/CSV" (all languages of the generation as columns, English first). </summary>
+        public static string GetCsvPath(int _generation)
+        {
+            return GetGenerationPath(_generation) + "/" + CSV_FOLDER;
+        }
+
+        /// <summary> Resources path (no extension) of an exported CSV file: "Data/Gen9/CSV/Types". </summary>
+        public static string GetCsvResourcePath(int _generation, string _fileName)
+        {
+            return GetCsvPath(_generation) + "/" + _fileName;
         }
 
         /// <summary> Resources path (no extension) of the export index. </summary>

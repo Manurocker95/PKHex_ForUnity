@@ -3,50 +3,164 @@ using System.Text;
 
 namespace PKHexForUnity
 {
+    /// <summary> Layout of the exported list .txt files. </summary>
+    public enum PKHexTextFormat
+    {
+        /// <summary> No ID column: one name per line (line N, counting from 0, is ID N). Extra columns comma-separated. </summary>
+        NamesOnly,
+
+        /// <summary> Comma-separated with the ID first: "6,Fire". </summary>
+        CommaSeparated,
+    }
+
     /// <summary>
-    /// Builds readable text from the exported data. Used by the exporter for the .txt files and usable at runtime.
+    /// Builds readable text and CSV from the exported data. Used by the exporter and usable at runtime.
     /// </summary>
+    /// <remarks>
+    /// CSV fields follow RFC 4180: a field containing a comma, quote or line break is quoted and its quotes doubled.
+    /// </remarks>
     public static class PKHexDataText
     {
         public const string NONE_TEXT = "-";
         private const string SEPARATOR = ", ";
+        private const char CSV_SEPARATOR = ',';
 
-        /// <summary> "ID&lt;tab&gt;Name" per line. </summary>
-        public static string FormatIdList(string[] _names)
+        /// <summary> One entry per line: "Name" or "ID,Name". </summary>
+        public static string FormatIdList(string[] _names, PKHexTextFormat _format)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < _names.Length; i++)
             {
-                sb.Append(i).Append('\t').Append(_names[i]).Append('\n');
+                if (_format == PKHexTextFormat.CommaSeparated)
+                {
+                    sb.Append(i).Append(CSV_SEPARATOR).Append(EscapeCsv(_names[i]));
+                }
+                else
+                {
+                    sb.Append(_names[i]);
+                }
+                sb.Append('\n');
             }
             return sb.ToString();
         }
 
-        /// <summary> "Species&lt;tab&gt;Form&lt;tab&gt;SpeciesName&lt;tab&gt;FormName" per line. </summary>
-        public static string FormatFormList(PKHexGameStrings _game, PKHexStringTable _strings)
+        /// <summary> "SpeciesName,FormName" or "Species,Form,SpeciesName,FormName" per line. </summary>
+        public static string FormatFormList(PKHexGameStrings _game, PKHexStringTable _strings, PKHexTextFormat _format)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < _game.Forms.Length; i++)
             {
                 PKHexFormName form = _game.Forms[i];
-                sb.Append(form.Species).Append('\t').Append(form.Form).Append('\t')
-                    .Append(_strings.GetSpeciesName(form.Species)).Append('\t').Append(form.Name).Append('\n');
+                if (_format == PKHexTextFormat.CommaSeparated)
+                {
+                    sb.Append(form.Species).Append(CSV_SEPARATOR).Append(form.Form).Append(CSV_SEPARATOR);
+                }
+                sb.Append(EscapeCsv(_strings.GetSpeciesName(form.Species))).Append(CSV_SEPARATOR).Append(EscapeCsv(form.Name)).Append('\n');
             }
             return sb.ToString();
         }
 
-        /// <summary> "ID&lt;tab&gt;Name&lt;tab&gt;Type&lt;tab&gt;PP" per line. </summary>
-        public static string FormatMoveList(PKHexGameData _game, PKHexStringTable _strings)
+        /// <summary> "Name,Type,PP" or "ID,Name,Type,PP" per line. </summary>
+        public static string FormatMoveList(PKHexGameData _game, PKHexStringTable _strings, PKHexTextFormat _format)
         {
             StringBuilder sb = new StringBuilder();
             List<PKHexMoveEntry> moves = _game.Moves;
             for (int i = 0; i < moves.Count; i++)
             {
                 PKHexMoveEntry move = moves[i];
-                sb.Append(move.Move).Append('\t').Append(_strings.GetMoveName(move.Move)).Append('\t')
-                    .Append(_strings.GetTypeName(move.Type)).Append('\t').Append(move.PP).Append('\n');
+                if (_format == PKHexTextFormat.CommaSeparated)
+                {
+                    sb.Append(move.Move).Append(CSV_SEPARATOR);
+                }
+                sb.Append(EscapeCsv(_strings.GetMoveName(move.Move))).Append(CSV_SEPARATOR)
+                    .Append(EscapeCsv(_strings.GetTypeName(move.Type))).Append(CSV_SEPARATOR).Append(move.PP).Append('\n');
             }
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// CSV with one row per ID and one column per language: "ID,English,Spanish" header, then "6,Fire,Fuego".
+        /// Rows run to the longest column; shorter columns are left empty.
+        /// </summary>
+        public static string FormatCsvIdTable(string[] _languages, string[][] _columns, bool _header)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (_header)
+            {
+                sb.Append("ID");
+                for (int c = 0; c < _languages.Length; c++)
+                {
+                    sb.Append(CSV_SEPARATOR).Append(EscapeCsv(_languages[c]));
+                }
+                sb.Append('\n');
+            }
+            int rows = 0;
+            for (int c = 0; c < _columns.Length; c++)
+            {
+                rows = System.Math.Max(rows, _columns[c].Length);
+            }
+            for (int r = 0; r < rows; r++)
+            {
+                sb.Append(r);
+                for (int c = 0; c < _columns.Length; c++)
+                {
+                    sb.Append(CSV_SEPARATOR);
+                    if (r < _columns[c].Length)
+                    {
+                        sb.Append(EscapeCsv(_columns[c][r]));
+                    }
+                }
+                sb.Append('\n');
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// CSV of the form names of one game: "Species,Form,English,Spanish..." per row.
+        /// Rows come from the first table (English when ordered by the exporter).
+        /// </summary>
+        public static string FormatCsvFormTable(string _gameKey, PKHexStringTable[] _tables, bool _header)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (_header)
+            {
+                sb.Append("Species").Append(CSV_SEPARATOR).Append("Form");
+                for (int c = 0; c < _tables.Length; c++)
+                {
+                    sb.Append(CSV_SEPARATOR).Append(EscapeCsv(_tables[c].LanguageFolder));
+                }
+                sb.Append('\n');
+            }
+            PKHexGameStrings rows = _tables.Length != 0 ? _tables[0].GetGameStrings(_gameKey) : null;
+            if (rows == null)
+            {
+                return sb.ToString();
+            }
+            for (int r = 0; r < rows.Forms.Length; r++)
+            {
+                PKHexFormName form = rows.Forms[r];
+                sb.Append(form.Species).Append(CSV_SEPARATOR).Append(form.Form);
+                for (int c = 0; c < _tables.Length; c++)
+                {
+                    sb.Append(CSV_SEPARATOR).Append(EscapeCsv(_tables[c].GetFormName(_gameKey, form.Species, form.Form)));
+                }
+                sb.Append('\n');
+            }
+            return sb.ToString();
+        }
+
+        /// <summary> Quotes a CSV field when needed (comma, quote or line break). </summary>
+        public static string EscapeCsv(string _value)
+        {
+            if (string.IsNullOrEmpty(_value))
+            {
+                return string.Empty;
+            }
+            if (_value.IndexOfAny(new char[] { CSV_SEPARATOR, '"', '\n', '\r' }) < 0)
+            {
+                return _value;
+            }
+            return "\"" + _value.Replace("\"", "\"\"") + "\"";
         }
 
         /// <summary> Full readable dump of every species-form of a game. </summary>
