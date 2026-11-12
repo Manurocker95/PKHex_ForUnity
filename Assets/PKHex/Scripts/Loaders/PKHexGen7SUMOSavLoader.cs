@@ -1,41 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PKHeX.Core;
-using System.IO;
-using System.Linq;
 
 namespace PKHexForUnity
 {
+    /// <summary>
+    /// Save loader for Sun and Moon.
+    /// </summary>
     public class PKHexGen7SUMOSavLoader : PKHexSavLoader<SAV7SM>
     {
-        public override int Badges
+        public static SAV7SM LoadSaveFileFromPath(string _sav)
         {
-            get
-            {
-                return m_saveFile != null ? (int)m_saveFile.Misc.Stamps : 0;
-            }
+            return PKHexSavLoaderFactory.LoadSaveFileFromPath<SAV7SM>(_sav);
         }
-
-        public override uint Money
-        {
-            get
-            {
-                return m_saveFile != null ? m_saveFile.Misc.Money : 0;
-            }
-        }
-
-        public static SAV7SM LoadSaveFileFromPath(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV7SM savefile = new SAV7SM(bytess);
-
-            return savefile;
-        }
-
-        public override SAV7SM LoadSaveFile(string sav)
-        {
-            return LoadSaveFileFromPath(sav);
-        }        
     }
 }

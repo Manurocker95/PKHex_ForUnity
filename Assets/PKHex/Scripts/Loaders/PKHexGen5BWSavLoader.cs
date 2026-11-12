@@ -1,41 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PKHeX.Core;
-using System.IO;
-using System.Linq;
 
 namespace PKHexForUnity
 {
+    /// <summary>
+    /// Save loader for Black and White.
+    /// </summary>
     public class PKHexGen5BWSavLoader : PKHexSavLoader<SAV5BW>
     {
-        public override int Badges
+        public static SAV5BW LoadSaveFileFromPath(string _sav)
         {
-            get
-            {
-                return m_saveFile != null ? m_saveFile.Misc.Badges : 0;
-            }
+            return PKHexSavLoaderFactory.LoadSaveFileFromPath<SAV5BW>(_sav);
         }
-
-        public override uint Money
-        {
-            get
-            {
-                return m_saveFile != null ? m_saveFile.Misc.Money : 0;
-            }
-        }
-
-        public static SAV5BW LoadSaveFileFromPath(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV5BW savefile = new SAV5BW(bytess);
-
-            return savefile;
-        }
-
-        public override SAV5BW LoadSaveFile(string sav)
-        {
-            return LoadSaveFileFromPath(sav);
-        }        
     }
 }

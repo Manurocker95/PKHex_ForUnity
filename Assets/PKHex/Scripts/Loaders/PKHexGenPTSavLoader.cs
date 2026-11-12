@@ -1,41 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PKHeX.Core;
-using System.IO;
-using System.Linq;
 
 namespace PKHexForUnity
 {
+    /// <summary>
+    /// Save loader for Platinum.
+    /// </summary>
     public class PKHexGenPTSavLoader : PKHexSavLoader<SAV4Pt>
     {
-        public override int Badges
+        public static SAV4Pt LoadSaveFileFromPath(string _sav)
         {
-            get
-            {
-                return m_saveFile != null ? m_saveFile.Badges : 0;
-            }
+            return PKHexSavLoaderFactory.LoadSaveFileFromPath<SAV4Pt>(_sav);
         }
-
-        public override uint Coins
-        {
-            get
-            {
-                return m_saveFile != null ? m_saveFile.Coin : 0;
-            }
-        }
-
-        public static SAV4Pt LoadSaveFileFromPath(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV4Pt savefile = new SAV4Pt(bytess);
-
-            return savefile;
-        }
-
-        public override SAV4Pt LoadSaveFile(string sav)
-        {
-            return LoadSaveFileFromPath(sav);
-        }        
     }
 }

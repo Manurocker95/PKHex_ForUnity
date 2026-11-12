@@ -1,37 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PKHeX.Core;
-using System.IO;
-using System.Linq;
-
 
 namespace PKHexForUnity
 {
+    /// <summary>
+    /// Save loader for Scarlet and Violet.
+    /// </summary>
     public class PKHexGen9SCVISavLoader : PKHexSavLoader<SAV9SV>
     {
-        public override int Badges
+        public static SAV9SV LoadSaveFileFromPath(string _sav)
         {
-            get
-            {
-                return m_saveFile != null ? 0 : 0; // TODO look for offset here
-            }
-        }
-
-        public static SAV9SV LoadSaveFileFromPath(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV9SV savefile = new PKHeX.Core.SAV9SV(bytess);
-
-            return savefile;
-        }
-
-        public override SAV9SV LoadSaveFile(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV9SV savefile = new PKHeX.Core.SAV9SV(bytess);
-
-            return savefile;
+            return PKHexSavLoaderFactory.LoadSaveFileFromPath<SAV9SV>(_sav);
         }
     }
 }

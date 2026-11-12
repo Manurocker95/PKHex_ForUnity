@@ -1,28 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PKHeX.Core;
-using System.IO;
-using System.Linq;
 
 namespace PKHexForUnity
 {
+    /// <summary>
+    /// Save loader for Pokémon XD: Gale of Darkness.
+    /// </summary>
     public class PKHexGen3XDSavLoader : PKHexSavLoader<SAV3XD>
     {
-        public static SAV3XD LoadSaveFileFromPath(string sav)
+        public static SAV3XD LoadSaveFileFromPath(string _sav)
         {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV3XD savefile = new PKHeX.Core.SAV3XD(bytess);
-
-            return savefile;
+            return PKHexSavLoaderFactory.LoadSaveFileFromPath<SAV3XD>(_sav);
         }
-
-        public override SAV3XD LoadSaveFile(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV3XD savefile = new PKHeX.Core.SAV3XD(bytess);
-
-            return savefile;
-        }        
     }
 }

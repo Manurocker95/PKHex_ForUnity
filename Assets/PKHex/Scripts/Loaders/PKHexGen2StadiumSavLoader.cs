@@ -1,36 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PKHeX.Core;
-using System.IO;
-using System.Linq;
 
 namespace PKHexForUnity
 {
+    /// <summary>
+    /// Save loader for Pokémon Stadium 2.
+    /// </summary>
     public class PKHexGen2StadiumSavLoader : PKHexSavLoader<SAV2Stadium>
     {
-        public override string PlayerName
+        public static SAV2Stadium LoadSaveFileFromPath(string _sav)
         {
-            get
-            {
-                return m_saveFile != null ? m_saveFile.OT : base.PlayerName;
-            }
-        }
-
-        public static SAV2Stadium LoadSaveFileFromPath(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV2Stadium savefile = new PKHeX.Core.SAV2Stadium(bytess);
-
-            return savefile;
-        }
-
-        public override SAV2Stadium LoadSaveFile(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV2Stadium savefile = new PKHeX.Core.SAV2Stadium(bytess);
-
-            return savefile;
+            return PKHexSavLoaderFactory.LoadSaveFileFromPath<SAV2Stadium>(_sav);
         }
     }
 }

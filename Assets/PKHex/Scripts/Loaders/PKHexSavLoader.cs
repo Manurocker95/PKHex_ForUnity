@@ -1,16 +1,53 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using PKHeX.Core;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using PKHeX.Core;
+using UnityEngine;
 
 namespace PKHexForUnity
 {
-    public class PKHexSavLoader<T> where T : SaveFile
+    /// <summary>
+    /// Non-generic access to any save loader. Replaces the previous 'dynamic'/MakeGenericType usage,
+    /// which is not available on Unity 5.6 (.NET 3.5) nor safe under AOT/IL2CPP.
+    /// </summary>
+    public interface IPKHexSavLoader
     {
+        SaveFile CurrentSaveFile { get; }
+        string PlayerName { get; }
+        int Badges { get; }
+        int MaxMoney { get; }
+        uint Money { get; }
+        int Gender { get; }
+        int PlayedHours { get; }
+        int PlayedMinutes { get; }
+        int PlayedSeconds { get; }
+        int TID { get; }
+        int DisplayTID { get; }
+        uint Coins { get; }
 
+        void SetSaveFile(SaveFile _saveFile);
+        bool HasParty();
+        PKM[] GetParty();
+        PKM[] GetBoxPokemon(bool _skipEmpty);
+        string GetSummary(SystemLanguage _language);
+        RuntimeEntityData GetPokemonData(PKM _pokemon, SystemLanguage _language, bool _checkLegality);
+        string GetPokemonNameInPartyInSlotInCurrentFile(int _slot);
+        IEnumerable<string> GetPartyPokemonMovesInCurrentFile(int _slot);
+    }
+
+    /// <summary>
+    /// Base save loader. Works for every game PKHeX supports; derived loaders only add game specific helpers.
+    /// </summary>
+    public class PKHexSavLoader<T> : IPKHexSavLoader where T : SaveFile
+    {
         public T m_saveFile;
+
+        public SaveFile CurrentSaveFile
+        {
+            get
+            {
+                return m_saveFile;
+            }
+        }
 
         public virtual string PlayerName
         {
@@ -20,11 +57,12 @@ namespace PKHexForUnity
             }
         }
 
+        /// <summary> Number of obtained badges (0 when the game has none or PKHeX does not expose them). </summary>
         public virtual int Badges
         {
             get
             {
-                return 0;
+                return m_saveFile != null ? Mathf.Max(0, RuntimeSaveData.GetBadgeCount(m_saveFile)) : 0;
             }
         }
 
@@ -74,13 +112,13 @@ namespace PKHexForUnity
             {
                 return m_saveFile != null ? m_saveFile.PlayedSeconds : 0;
             }
-        } 
-        
+        }
+
         public virtual int TID
         {
             get
             {
-                return m_saveFile != null ? m_saveFile.TID : 0;
+                return m_saveFile != null ? m_saveFile.TID16 : 0;
             }
         }
 
@@ -88,10 +126,10 @@ namespace PKHexForUnity
         {
             get
             {
-                return m_saveFile != null ? m_saveFile.DisplayTID : 0;
+                return m_saveFile != null ? (int)m_saveFile.DisplayTID : 0;
             }
-        }  
-        
+        }
+
         public virtual int MaxCoins
         {
             get
@@ -100,262 +138,271 @@ namespace PKHexForUnity
             }
         }
 
+        /// <summary> Game Corner coins (Gen 1-4); 0 for games without coins. </summary>
         public virtual uint Coins
         {
             get
             {
+                SaveFile sav = m_saveFile;
+                if (sav is SAV1)
+                {
+                    return ((SAV1)sav).Coin;
+                }
+                if (sav is SAV2)
+                {
+                    return ((SAV2)sav).Coin;
+                }
+                if (sav is SAV3)
+                {
+                    return ((SAV3)sav).Coin;
+                }
+                if (sav is SAV4)
+                {
+                    return ((SAV4)sav).Coin;
+                }
                 return 0;
             }
         }
 
-        public virtual void SetSaveFile(SaveFile saveFile)
+        public virtual void SetSaveFile(SaveFile _saveFile)
         {
-            m_saveFile = saveFile as T;
+            m_saveFile = _saveFile as T;
+            if (_saveFile != null && m_saveFile == null)
+            {
+                Debug.LogError("[PKHex] " + _saveFile.GetType().Name + " cannot be used by a loader of " + typeof(T).Name + ".");
+            }
         }
 
-        public virtual bool SaveFileExists(string sav)
+        public virtual bool SaveFileExists(string _sav)
         {
-            return File.Exists(sav);
+            return File.Exists(_sav);
         }
 
-        public virtual T LoadSaveFile(string sav)
+        /// <summary> Loads (and auto-detects) a save file; null if missing, unsupported or of another game. </summary>
+        public virtual T LoadSaveFile(string _sav)
         {
-            return default(T);
+            return PKHexSavLoaderFactory.LoadSaveFileFromPath<T>(_sav);
         }
 
+        /// <summary> Loads the save file and keeps it as the current file. </summary>
+        public virtual bool LoadCurrentSaveFile(string _sav)
+        {
+            m_saveFile = LoadSaveFile(_sav);
+            return m_saveFile != null;
+        }
 
-        public virtual T0 GetPKM<T0>(T savefile, byte[] data)
+        public virtual T0 GetPKM<T0>(T _savefile, byte[] _data)
         {
             return default(T0);
         }
 
         public virtual bool HasParty()
         {
-            return m_saveFile != null ? m_saveFile.HasParty : false;
+            return m_saveFile != null && m_saveFile.HasParty;
         }
 
-        public virtual bool IsSurfingPikachuInPartySaveData(string sav)
+        public virtual PKM[] GetParty()
         {
-            T savefile = LoadSaveFile(sav);
-            return IsThereAPokemonInPartyWithMove(savefile, "Surf");
+            return m_saveFile != null ? RuntimeSaveData.GetParty(m_saveFile) : new PKM[0];
         }
 
-        public virtual bool IsSurfingPikachuInPartySaveData(T savefile)
+        public virtual PKM[] GetBoxPokemon(bool _skipEmpty)
         {
-            return IsThereAPokemonInPartyWithMove(savefile, "Surf");
+            return m_saveFile != null ? RuntimeSaveData.GetBoxPokemon(m_saveFile, _skipEmpty) : new PKM[0];
         }
 
-        public virtual bool IsThereAPokemonInPartyWithMoveInCurrentFile(string move, string _pokemon)
+        public virtual string GetSummary(SystemLanguage _language)
         {
-            return m_saveFile != null ? m_saveFile.HasParty && GetPokemonInPartyWithMove(m_saveFile, move, _pokemon) > -1 : false;
-        }        
-        
-        public virtual bool IsThereAPokemonInPartyWithMoveInCurrentFile(string move)
-        {
-            return m_saveFile != null ? m_saveFile.HasParty && GetPokemonInPartyWithMove(m_saveFile, move) > -1 : false;
+            return m_saveFile != null ? RuntimeSaveData.GetSummary(m_saveFile, PKHexUtils.GetLanguageCode(_language)) : "No save file loaded.";
         }
 
-        public virtual bool IsThereAPokemonInPartyWithMove(string sav, string move)
+        public virtual RuntimeEntityData GetPokemonData(PKM _pokemon, SystemLanguage _language, bool _checkLegality)
         {
-            T savefile = LoadSaveFile(sav);
-            return savefile.HasParty && GetPokemonInPartyWithMove(savefile, move) > -1;
+            return RuntimeEntityData.FromPKM(_pokemon, PKHexUtils.GetLanguageCode(_language), _checkLegality);
         }
 
-        public virtual bool IsThereAPokemonInPartyWithMove(T savefile, string move, string _pokemon = "")
+        public virtual bool IsSurfingPikachuInPartySaveData(string _sav)
         {
-            return savefile.HasParty && GetPokemonInPartyWithMove(savefile, move, _pokemon) > -1;
+            T savefile = LoadSaveFile(_sav);
+            return savefile != null && IsThereAPokemonInPartyWithMove(savefile, "Surf", "Pikachu");
         }
 
-
-        public virtual int GetPokemonInPartyWithMove(T savefile, string _moveName, string _pokemon = "", SystemLanguage _lang = SystemLanguage.English)
+        public virtual bool IsSurfingPikachuInPartySaveData(T _savefile)
         {
-            var party = savefile.PartyData;
+            return IsThereAPokemonInPartyWithMove(_savefile, "Surf", "Pikachu");
+        }
 
-            int indexInParty = 0;
-            foreach (PKM pokemon in party)
+        public virtual bool IsThereAPokemonInPartyWithMoveInCurrentFile(string _move, string _pokemon)
+        {
+            return m_saveFile != null && m_saveFile.HasParty && GetPokemonInPartyWithMove(m_saveFile, _move, _pokemon) > -1;
+        }
+
+        public virtual bool IsThereAPokemonInPartyWithMoveInCurrentFile(string _move)
+        {
+            return IsThereAPokemonInPartyWithMoveInCurrentFile(_move, string.Empty);
+        }
+
+        public virtual bool IsThereAPokemonInPartyWithMove(string _sav, string _move)
+        {
+            T savefile = LoadSaveFile(_sav);
+            return savefile != null && savefile.HasParty && GetPokemonInPartyWithMove(savefile, _move) > -1;
+        }
+
+        public virtual bool IsThereAPokemonInPartyWithMove(T _savefile, string _move, string _pokemon = "")
+        {
+            return _savefile != null && _savefile.HasParty && GetPokemonInPartyWithMove(_savefile, _move, _pokemon) > -1;
+        }
+
+        /// <summary>
+        /// Index of the first party member that knows <paramref name="_moveName"/> (and, if given, is of species
+        /// <paramref name="_pokemon"/>), or -1. Names are compared in <paramref name="_lang"/>.
+        /// </summary>
+        public virtual int GetPokemonInPartyWithMove(T _savefile, string _moveName, string _pokemon = "", SystemLanguage _lang = SystemLanguage.English)
+        {
+            if (_savefile == null || !_savefile.HasParty)
             {
-                List<string> moves = new List<string>(GetPokemonMoves(pokemon, _lang));
-                if (moves.Contains(_moveName))
-                {
-                    if (string.IsNullOrEmpty(_pokemon))
-                    {
-                        Debug.Log($"Yes, party contains the move {_moveName} in pokémon {pokemon.Nickname}  ");
-                        return indexInParty;
-                    }
-                    else
-                    {
-                        if (PKHexUtils.SpeciesStrings(_lang).Contains(_pokemon))
-                        {
-                            Debug.Log($"Yes, a {pokemon.Nickname} has {_moveName}");
-                            return indexInParty;
-                        }
-                    }
-                }
-
-                indexInParty++;
+                return -1;
             }
 
+            PKM[] party = RuntimeSaveData.GetParty(_savefile);
+            for (int i = 0; i < party.Length; i++)
+            {
+                PKM pokemon = party[i];
+                List<string> moves = new List<string>(GetPokemonMoves(pokemon, _lang));
+                if (!moves.Contains(_moveName))
+                {
+                    continue;
+                }
+                if (string.IsNullOrEmpty(_pokemon))
+                {
+                    Debug.Log("[PKHex] Party contains the move " + _moveName + " in " + pokemon.Nickname);
+                    return i;
+                }
+                if (string.Equals(PKHexUtils.GetSpeciesFromID(pokemon.Species, _lang), _pokemon, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    Debug.Log("[PKHex] " + pokemon.Nickname + " has " + _moveName);
+                    return i;
+                }
+            }
             return -1;
         }
-
 
         public virtual int GetPokemonInPartyWithMoveInCurrentFile(string _moveName, string _pokemon = "", SystemLanguage _lang = SystemLanguage.English)
         {
-            if (m_saveFile == null)
-                return -1;
-
-            var party = m_saveFile.PartyData;
-
-            int indexInParty = 0;
-            foreach (PKM pokemon in party)
-            {
-                List<string> moves = new List<string>(GetPokemonMoves(pokemon));
-                if (moves.Contains(_moveName))
-                {
-                    if (string.IsNullOrEmpty(_pokemon))
-                    {
-                        Debug.Log($"Yes, party contains the move {_moveName} in pokémon {pokemon.Nickname}  ");
-                        return indexInParty;
-                    }
-                    else
-                    {
-                        if (PKHexUtils.SpeciesStrings(_lang).Contains(_pokemon))
-                        {
-                            Debug.Log($"Yes, a {pokemon.Nickname} has {_moveName}");
-                            return indexInParty;
-                        }
-                    }
-                }
-
-                indexInParty++;
-            }
-
-            return -1;
+            return GetPokemonInPartyWithMove(m_saveFile, _moveName, _pokemon, _lang);
         }
 
-        public virtual int GetLevelOfPokemonInPartyInSlotInCurrentFile(int slot)
+        public virtual int GetLevelOfPokemonInPartyInSlotInCurrentFile(int _slot)
         {
-            return GetPokemonInParty(m_saveFile, slot).CurrentLevel;
+            return GetPokemonInParty(m_saveFile, _slot).CurrentLevel;
         }
 
-        public virtual string GetPokemonNameInPartyInSlotInCurrentFile(int slot)
+        public virtual string GetPokemonNameInPartyInSlotInCurrentFile(int _slot)
         {
-            return GetPokemonInParty(m_saveFile, slot).Nickname;
+            return GetPokemonInParty(m_saveFile, _slot).Nickname;
         }
 
-
-        public virtual string GetPokemonNameOfPartyIndexInCurrentFile(int slot)
+        public virtual string GetPokemonNameOfPartyIndexInCurrentFile(int _slot)
         {
-            return GetPokemonInParty(m_saveFile, slot).Nickname;
+            return GetPokemonInParty(m_saveFile, _slot).Nickname;
         }
 
-        public virtual PKM GetPokemonInPartyInCurrentFile(int slot)
+        public virtual PKM GetPokemonInPartyInCurrentFile(int _slot)
         {
-            var party = m_saveFile.PartyData;
-            return party[slot];
+            return GetPokemonInParty(m_saveFile, _slot);
         }
 
-        public virtual int GetLevelOfPokemonInPartyInSlot(T savefile, int slot)
+        public virtual int GetLevelOfPokemonInPartyInSlot(T _savefile, int _slot)
         {
-            return GetPokemonInParty(savefile, slot).CurrentLevel;
+            return GetPokemonInParty(_savefile, _slot).CurrentLevel;
         }
 
-        public virtual string GetPokemonNameInPartyInSlot(T savefile, int slot)
+        public virtual string GetPokemonNameInPartyInSlot(T _savefile, int _slot)
         {
-            return GetPokemonInParty(savefile, slot).Nickname;
+            return GetPokemonInParty(_savefile, _slot).Nickname;
         }
 
-
-        public virtual string GetPokemonNameOfPartyIndex(T savefile, int slot)
+        public virtual string GetPokemonNameOfPartyIndex(T _savefile, int _slot)
         {
-            return GetPokemonInParty(savefile, slot).Nickname;
+            return GetPokemonInParty(_savefile, _slot).Nickname;
         }
 
         public virtual System.Type PKMNType
         {
             get
             {
-                return m_saveFile.PKMType;
+                return m_saveFile != null ? m_saveFile.PKMType : typeof(PKM);
             }
-            
         }
 
-        public virtual string GetPokemonSpeciesName(PKM pokemon, T saveFile)
+        public virtual string GetPokemonSpeciesName(PKM _pokemon, T _saveFile)
         {
-            return SpeciesName.GetSpeciesName(pokemon.Species, saveFile.Language);
+            return SpeciesName.GetSpeciesName(_pokemon.Species, PKHexUtils.GetSafeLanguage(_saveFile));
         }
 
-        public virtual string GetPokemonSpeciesNameInCurrentFile(PKM pokemon)
+        public virtual string GetPokemonSpeciesNameInCurrentFile(PKM _pokemon)
         {
-            return SpeciesName.GetSpeciesName(pokemon.Species, m_saveFile.Language);
+            return SpeciesName.GetSpeciesName(_pokemon.Species, PKHexUtils.GetSafeLanguage(m_saveFile));
         }
 
-        public virtual string GetPokemonSpeciesNameInLanguage(PKM pokemon, SystemLanguage _language)
+        public virtual string GetPokemonSpeciesNameInLanguage(PKM _pokemon, SystemLanguage _language)
         {
-            return SpeciesName.GetSpeciesName(pokemon.Species, PKHexUtils.GetSpeciesLanguageListIndex(_language));
+            return PKHexUtils.GetPokemonSpeciesNameInLanguage(_pokemon, _language);
         }
 
-        public virtual string GetPokemonSpeciesNameInLanguage(PKM pokemon, LanguageID _language)
+        public virtual string GetPokemonSpeciesNameInLanguage(PKM _pokemon, LanguageID _language)
         {
-            return SpeciesName.GetSpeciesName(pokemon.Species, PKHexUtils.GetSpeciesLanguageListIndex(_language));
+            return PKHexUtils.GetPokemonSpeciesNameInLanguage(_pokemon, _language);
         }
 
-        public virtual string GetPokemonSpeciesNameInLanguage(PKM pokemon, int _language)
+        public virtual string GetPokemonSpeciesNameInLanguage(PKM _pokemon, int _language)
         {
-            return SpeciesName.GetSpeciesName(pokemon.Species, _language);
+            return SpeciesName.GetSpeciesName(_pokemon.Species, _language);
         }
 
-        public virtual KeyValuePair<bool, PKM> LoadPKMFromPath(string file)
+        public virtual KeyValuePair<bool, PKM> LoadPKMFromPath(string _file)
         {
-            if (SaveFileExists(file))
+            if (SaveFileExists(_file))
             {
-                return LoadPKM(File.ReadAllBytes(file));
+                return PKHexUtils.LoadPKM(File.ReadAllBytes(_file), Path.GetExtension(_file));
             }
-
             return new KeyValuePair<bool, PKM>(false, null);
         }
 
-        public virtual KeyValuePair<bool, PKM> LoadPKM(byte[] data)
+        /// <summary> Loads an entity file using this save's entity format as the preferred format. </summary>
+        public virtual KeyValuePair<bool, PKM> LoadPKM(byte[] _data)
         {
-            if (FileUtil.TryGetPKM(data, out PKM pk, "." + PKMNType))
-            {
-                return new KeyValuePair<bool, PKM>(true, pk);
-            }
-
-            return new KeyValuePair<bool, PKM>(false, null);
+            return PKHexUtils.LoadPKM(_data, "." + PKMNType.Name.ToLowerInvariant());
         }
 
-        public virtual PKM GetPokemonInParty(T savefile, int slot)
+        public virtual PKM GetPokemonInParty(T _savefile, int _slot)
         {
-            var party = savefile.PartyData;
-            return party[slot];
-        }        
-        
-        public virtual PKM GetPokemonInSlot(T savefile, int slot)
-        {
-            var party = savefile.PartyData;
-            return party[slot];
+            return _savefile.GetPartySlotAtIndex(_slot);
         }
 
-        public virtual IEnumerable<string> GetPokemonMoves(PKM pokemon, SystemLanguage _language = SystemLanguage.English)
+        public virtual PKM GetPokemonInSlot(T _savefile, int _slot)
         {
-            return pokemon != null ? PKHexUtils.GetMoveNames(pokemon.Moves, _language) : new string[1] { PKHexUtils.L_AError };
-        } 
-        
-        public virtual int GetPokemonLevel(PKM pokemon)
-        {
-            return pokemon != null ? pokemon.CurrentLevel : -1;
+            return _savefile.GetPartySlotAtIndex(_slot);
         }
 
-        public virtual IEnumerable<string> GetPartyPokemonMoves(T savFile, int slot)
+        public virtual IEnumerable<string> GetPokemonMoves(PKM _pokemon, SystemLanguage _language = SystemLanguage.English)
         {
-            return GetPokemonMoves(GetPokemonInParty(savFile, slot));
+            return _pokemon != null ? PKHexUtils.GetMoveNames(_pokemon.Moves, _language) : new string[] { PKHexUtils.L_AError };
         }
-        
-        public virtual IEnumerable<string> GetPartyPokemonMovesInCurrentFile(int slot)
+
+        public virtual int GetPokemonLevel(PKM _pokemon)
         {
-            return GetPokemonMoves(GetPokemonInPartyInCurrentFile(slot));
+            return _pokemon != null ? _pokemon.CurrentLevel : -1;
+        }
+
+        public virtual IEnumerable<string> GetPartyPokemonMoves(T _savFile, int _slot)
+        {
+            return GetPokemonMoves(GetPokemonInParty(_savFile, _slot));
+        }
+
+        public virtual IEnumerable<string> GetPartyPokemonMovesInCurrentFile(int _slot)
+        {
+            return GetPokemonMoves(GetPokemonInPartyInCurrentFile(_slot));
         }
     }
-
 }

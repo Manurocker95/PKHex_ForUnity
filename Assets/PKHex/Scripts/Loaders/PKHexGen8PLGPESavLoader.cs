@@ -1,36 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PKHeX.Core;
-using System.IO;
-using System.Linq;
 
 namespace PKHexForUnity
 {
+    /// <summary>
+    /// Save loader for Let's Go, Pikachu! and Let's Go, Eevee!
+    /// </summary>
     public class PKHexGen8PLGPESavLoader : PKHexSavLoader<SAV7b>
     {
-        public override int Badges
+        public static SAV7b LoadSaveFileFromPath(string _sav)
         {
-            get
-            {
-                return m_saveFile != null ? 0 : 0; // TODO look for offset here
-            }
-        }
-
-        public static SAV7b LoadSaveFileFromPath(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV7b savefile = new PKHeX.Core.SAV7b(bytess);
-
-            return savefile;
-        }
-
-        public override SAV7b LoadSaveFile(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV7b savefile = new PKHeX.Core.SAV7b(bytess);
-
-            return savefile;
+            return PKHexSavLoaderFactory.LoadSaveFileFromPath<SAV7b>(_sav);
         }
     }
 }

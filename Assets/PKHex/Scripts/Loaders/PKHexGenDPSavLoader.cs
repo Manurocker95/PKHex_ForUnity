@@ -1,44 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using PKHeX.Core;
-using System.IO;
-using System.Linq;
 
 namespace PKHexForUnity
 {
+    /// <summary>
+    /// Save loader for Diamond and Pearl.
+    /// </summary>
     public class PKHexGenDPSavLoader : PKHexSavLoader<SAV4DP>
     {
-        public override int Badges
+        public static SAV4DP LoadSaveFileFromPath(string _sav)
         {
-            get
-            {
-                return m_saveFile != null ? m_saveFile.Badges : 0;
-            }
+            return PKHexSavLoaderFactory.LoadSaveFileFromPath<SAV4DP>(_sav);
         }
-
-        public override uint Coins
-        {
-            get
-            {
-                return m_saveFile != null ? m_saveFile.Coin : 0;
-            }
-        }
-
-        public static SAV4DP LoadSaveFileFromPath(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV4DP savefile = new SAV4DP(bytess);
-
-            return savefile;
-        }
-
-        public override SAV4DP LoadSaveFile(string sav)
-        {
-            byte[] bytess = File.ReadAllBytes(sav);
-            SAV4DP savefile = new SAV4DP(bytess);
-
-            return savefile;
-        }        
     }
 }
