@@ -1,3 +1,5 @@
+// Needs PKHeX.Core.dll: excluded from data-only player builds (see PKHexExportWindow).
+#if !PKHEX_DATA_ONLY || UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -262,3 +264,4 @@ namespace PKHexForUnity
         }
     }
 }
+#endif

@@ -1,4 +1,6 @@
-﻿using PKHeX.Core;
+﻿// Needs PKHeX.Core.dll: excluded from data-only player builds (see PKHexExportWindow).
+#if !PKHEX_DATA_ONLY || UNITY_EDITOR
+using PKHeX.Core;
 
 namespace PKHexForUnity
 {
@@ -41,3 +43,4 @@ namespace PKHexForUnity
         }
     }
 }
+#endif
